@@ -23,27 +23,27 @@ public class Peer extends Thread {
     private int id;
     private MulticastSocket ms;
     private int port;
+    private InetAddress group;
     private ArrayList<Peer> list;
     
     public Peer(int id, int port, String group) {
         this.id = id;
         this.port = port;
+        
         try {
+            this.group = InetAddress.getByName(group);
             ms = new MulticastSocket(port);
-            ms.joinGroup(InetAddress.getByName(group));
+            ms.joinGroup(this.group);
         } catch (IOException ex) {
             System.out.println("Erro na criação do peer");
             Logger.getLogger(Peer.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            if (ms!= null)
-                ms.close();
         }
     }
     
     @Override
     public void run() {
         try {
-            DatagramPacket hello = new DatagramPacket("Ola".getBytes(), 3, ms.getInetAddress(), port);
+            DatagramPacket hello = new DatagramPacket("Ola".getBytes(), 3, group, port);
             ms.send(hello);
             byte[] buffer = new byte[1000];
                 DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);

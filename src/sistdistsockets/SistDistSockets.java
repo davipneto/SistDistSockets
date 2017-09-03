@@ -25,15 +25,34 @@ public class SistDistSockets {
      */
     public static void main(String[] args) {
         System.setProperty("java.net.preferIPv4Stack", "true");
-
-        Peer p1 = new Peer(1, 1235, group);
-        InitialReceiveThread t1 = new InitialReceiveThread(p1);
-        t1.start();
-        Peer p2 = new Peer(2, 1236, group);
-        InitialReceiveThread t2 = new InitialReceiveThread(p2);
-        t2.start();
-        p1.send("OLAPESSOAL");
-        p2.send("OIEEE");
+        Scanner s = new Scanner(System.in);
+        String mess;
+        int message;
+        System.out.println("Digite o ID do peer: ");
+        Peer p = new Peer(s.nextInt(), 1235, group);
+        System.out.println("----------PEER " + p.getID() + "----------");
+        s.nextLine();
+        InitialReceiveThread t = new InitialReceiveThread(p);
+        t.start();
+//        while(true) {
+//            System.out.println("Digite a mensagem a ser enviada: ");
+//            message = s.nextInt();
+//            s.next();
+//            if (message == -1) {
+//                t.interrupt();
+//                break;
+//            }
+//            switch (message) {
+//                case 0: mess = "OI"; break;
+//                case 1: mess = "VAMO"; break;
+//                case 2: mess = "CABO"; break;
+//                default: mess = "NAO"; break;
+//            }
+//            p.send(mess);
+//        }
+        p.send("OI");
+        p.send("VAMO");
+        p.send("CHEGA");
     }
     
 }

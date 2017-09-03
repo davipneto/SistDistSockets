@@ -73,7 +73,7 @@ public class Peer {
             }
         };
         Timer informAliveIndexerTimer = new Timer();
-        informAliveIndexerTimer.scheduleAtFixedRate(informAliveIndexerTimerTask, 0, 5000);
+        informAliveIndexerTimer.schedule(informAliveIndexerTimerTask, 0, 5000);
     }
 
     public int getID() {

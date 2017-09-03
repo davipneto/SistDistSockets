@@ -21,26 +21,18 @@ public class Peer {
     private String group;
     private boolean indexerOn;
     private int indexerPort;
-    //private ArrayList<Peer> list;
+    private ArrayList<Integer> peersOnGroup;
     
     public Peer(int id, int port, String group) {
         this.iD = id;
         this.port = port;
         this.group = group;
+        peersOnGroup = new ArrayList();
+        indexerPort = -1;
         indexerOn = false;
-        TimerTask verifyAliveIndexerTimerTask = new TimerTask() {
-            @Override
-            public void run() {
-                if (indexerOn) {
-                    System.out.println("Indexador ta vivo, quem fala eh o peer " + iD);
-                    indexerOn = false;
-                } else {
-                    System.out.println("indexador caiu, quem fala eh o peer " + iD);
-                }
-            }
-        };
+        VerifyAliveIndexerTask vai = new VerifyAliveIndexerTask(this);
         Timer verifyAliveIndexerTimer = new Timer();
-        verifyAliveIndexerTimer.scheduleAtFixedRate(verifyAliveIndexerTimerTask, 5000, 5000);
+        verifyAliveIndexerTimer.scheduleAtFixedRate(vai, 5000, 5000);
     }
     
     public void send(String message) {
@@ -66,14 +58,20 @@ public class Peer {
     }
     
     public void beTheIndexer() {
+        System.out.println("Eu, peer" + iD + "vou ser o indexador!!");
+        send("newIndexer" + port);
         TimerTask informAliveIndexerTimerTask = new TimerTask() {
             @Override
             public void run() {
-                send("indexerHi");
+                send("indexerHi" + port);
             }
         };
         Timer informAliveIndexerTimer = new Timer();
         informAliveIndexerTimer.schedule(informAliveIndexerTimerTask, 0, 5000);
+    }
+    
+    public void putPeersOnGroup(int iD) {
+        peersOnGroup.add(iD);
     }
 
     public int getID() {
@@ -88,6 +86,14 @@ public class Peer {
         return group;
     }
 
+    public int getIndexerPort() {
+        return indexerPort;
+    }
+
+    public ArrayList<Integer> getPeersOnGroup() {
+        return peersOnGroup;
+    }
+
     public boolean isIndexerOn() {
         return indexerOn;
     }
@@ -95,6 +101,11 @@ public class Peer {
     public void setIndexerOn(boolean indexerOn) {
         this.indexerOn = indexerOn;
     }
+
+    public void setIndexerPort(int indexerPort) {
+        this.indexerPort = indexerPort;
+    }
+    
     
     
     

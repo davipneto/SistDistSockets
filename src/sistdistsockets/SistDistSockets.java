@@ -38,10 +38,6 @@ public class SistDistSockets {
         System.out.println("----------PEER " + p.getID() + "----------");
         PeerReceiveThread t = new PeerReceiveThread(p);
         t.start();
-        p.beTheIndexer();
-        //p.send("OI");
-        //p.send("VAMO");
-        //p.send("CHEGA");
     }
     
 }

@@ -7,6 +7,8 @@ package sistdistsockets;
 
 import java.io.*;
 import java.net.*;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,11 +16,11 @@ import java.util.logging.Logger;
  *
  * @author geova
  */
-public class InitialReceiveThread extends Thread {
+public class PeerReceiveThread extends Thread {
     
     private Peer peer;
     
-    public InitialReceiveThread (Peer peer) {
+    public PeerReceiveThread (Peer peer) {
         this.peer = peer;
     }
 
@@ -37,15 +39,13 @@ public class InitialReceiveThread extends Thread {
                 s.receive(messageIn);
                 message = new String(messageIn.getData());
                 Message m = new Message(message);
-                System.out.println("Sender: " + m.getSenderID() + " Message: " + m.getMessage() + " received by peer" + peer.getID());
-                TimeUnit.SECONDS.sleep(1);
+                PeerMessageManager pmm = new PeerMessageManager(peer, m);
+                pmm.start();
             }while(!message.trim().equals("sair"));
             s.close();
             this.interrupt();
         } catch (IOException ex) {
-            Logger.getLogger(InitialReceiveThread.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(InitialReceiveThread.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PeerReceiveThread.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

@@ -36,11 +36,12 @@ public class SistDistSockets {
         s.nextLine();
         Peer p = new Peer(id, port, group);
         System.out.println("----------PEER " + p.getID() + "----------");
-        InitialReceiveThread t = new InitialReceiveThread(p);
+        PeerReceiveThread t = new PeerReceiveThread(p);
         t.start();
-        p.send("OI");
-        p.send("VAMO");
-        p.send("CHEGA");
+        p.beTheIndexer();
+        //p.send("OI");
+        //p.send("VAMO");
+        //p.send("CHEGA");
     }
     
 }

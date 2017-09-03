@@ -5,38 +5,42 @@
  */
 package sistdistsockets;
 
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.net.MulticastSocket;
-import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import static sistdistsockets.SistDistSockets.group;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
 /**
  *
  * @author davi
  */
 
-public class Peer extends Thread {
+public class Peer {
     
     private int iD;
     private int port;
     private String group;
+    private boolean indexerOn;
+    private int indexerPort;
     //private ArrayList<Peer> list;
     
     public Peer(int id, int port, String group) {
         this.iD = id;
         this.port = port;
         this.group = group;
-    }
-    
-    @Override
-    public void run() {
-        
+        indexerOn = false;
+        TimerTask verifyAliveIndexerTimerTask = new TimerTask() {
+            @Override
+            public void run() {
+                if (indexerOn) {
+                    System.out.println("Indexador ta vivo, quem fala eh o peer " + iD);
+                    indexerOn = false;
+                } else {
+                    System.out.println("indexador caiu, quem fala eh o peer " + iD);
+                }
+            }
+        };
+        Timer verifyAliveIndexerTimer = new Timer();
+        verifyAliveIndexerTimer.scheduleAtFixedRate(verifyAliveIndexerTimerTask, 5000, 5000);
     }
     
     public void send(String message) {
@@ -47,7 +51,6 @@ public class Peer extends Thread {
             s.joinGroup(inetGroup);
             Message m = new Message(iD, message.length(), message);
             message = m.toString();
-            System.out.println("mensagem codificada: " + message);
             DatagramPacket messageOut = new DatagramPacket(message.getBytes(), message.getBytes().length, inetGroup, 6789);
             s.send(messageOut);
             s.leaveGroup(inetGroup);
@@ -61,6 +64,17 @@ public class Peer extends Thread {
             }
         }
     }
+    
+    public void beTheIndexer() {
+        TimerTask informAliveIndexerTimerTask = new TimerTask() {
+            @Override
+            public void run() {
+                send("indexerHi");
+            }
+        };
+        Timer informAliveIndexerTimer = new Timer();
+        informAliveIndexerTimer.scheduleAtFixedRate(informAliveIndexerTimerTask, 0, 5000);
+    }
 
     public int getID() {
         return iD;
@@ -73,6 +87,15 @@ public class Peer extends Thread {
     public String getGroup() {
         return group;
     }
+
+    public boolean isIndexerOn() {
+        return indexerOn;
+    }
+
+    public void setIndexerOn(boolean indexerOn) {
+        this.indexerOn = indexerOn;
+    }
+    
     
     
 }

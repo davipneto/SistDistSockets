@@ -29,27 +29,15 @@ public class SistDistSockets {
         String mess;
         int message;
         System.out.println("Digite o ID do peer: ");
-        Peer p = new Peer(s.nextInt(), 1235, group);
-        System.out.println("----------PEER " + p.getID() + "----------");
+        int id = s.nextInt();
+        //s.nextLine();
+        System.out.println("Digite a porta: ");
+        int port = s.nextInt();
         s.nextLine();
+        Peer p = new Peer(id, port, group);
+        System.out.println("----------PEER " + p.getID() + "----------");
         InitialReceiveThread t = new InitialReceiveThread(p);
         t.start();
-//        while(true) {
-//            System.out.println("Digite a mensagem a ser enviada: ");
-//            message = s.nextInt();
-//            s.next();
-//            if (message == -1) {
-//                t.interrupt();
-//                break;
-//            }
-//            switch (message) {
-//                case 0: mess = "OI"; break;
-//                case 1: mess = "VAMO"; break;
-//                case 2: mess = "CABO"; break;
-//                default: mess = "NAO"; break;
-//            }
-//            p.send(mess);
-//        }
         p.send("OI");
         p.send("VAMO");
         p.send("CHEGA");

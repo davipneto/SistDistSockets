@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  */
 public class PeerReceiveThread extends Thread {
     
-    private Peer peer;
+    private Peer peer; //o peer que essa thread representa
     
     public PeerReceiveThread (Peer peer) {
         this.peer = peer;
@@ -27,23 +27,27 @@ public class PeerReceiveThread extends Thread {
     @Override
     public void run() {
         try {
+            //inicializa o socket Multicast na porta correta
             MulticastSocket s = new MulticastSocket(6789);
+            //o socket entra no grupo correspondente
             InetAddress group = InetAddress.getByName(peer.getGroup());
             s.joinGroup(group);
             String message;
-            int number;
             DatagramPacket messageIn = null;
-            do{		// get messages from others in group
+            while (true) {
+                //prepara o buffer e o datagrama para receber mensagens do grupo
                 byte[] buffer = new byte[100];
                 messageIn = new DatagramPacket(buffer, buffer.length);
                 s.receive(messageIn);
                 message = new String(messageIn.getData());
+                //inicializa um objeto da classe Message, para separar as informacoes recebidas (o iD de quem enviou,
+                //o tamanho da mensagem e a mensagem em si)
                 Message m = new Message(message);
+                //inicializa e executa a thread responsável por processar a mensagem recebida, e fica em um loop
+                //para receber mais mensagens do grupo multicast
                 PeerMessageManager pmm = new PeerMessageManager(peer, m);
                 pmm.start();
-            }while(!message.trim().equals("sair"));
-            s.close();
-            this.interrupt();
+            }
         } catch (IOException ex) {
             Logger.getLogger(PeerReceiveThread.class.getName()).log(Level.SEVERE, null, ex);
         }

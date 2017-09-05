@@ -45,7 +45,7 @@ public class MultipeerReceiveThread extends Thread {
                 Message m = new Message(message);
                 //inicializa e executa a thread responsável por processar a mensagem recebida, e fica em um loop
                 //para receber mais mensagens do grupo multicast
-                PeerMessageManager pmm = new PeerMessageManager(peer, m);
+                MultipeerMessageManager pmm = new MultipeerMessageManager(peer, m);
                 pmm.start();
             }
         } catch (IOException ex) {

@@ -9,13 +9,13 @@ package sistdistsockets;
  *
  * @author davi
  */
-public class PeerMessageManager extends Thread {
+public class MultipeerMessageManager extends Thread {
     
     private Peer peer; //o peer correspondente
     private String message; //a mensagem recebida
     private int senderID; // o id do peer que enviou a mensagem
 
-    public PeerMessageManager(Peer peer, Message message) {
+    public MultipeerMessageManager(Peer peer, Message message) {
         this.peer = peer;
         this.message = message.getMessage();
         this.senderID = message.getSenderID();

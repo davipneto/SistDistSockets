@@ -37,7 +37,7 @@ public class SistDistSockets {
         Peer p = new Peer(id, port, group);
         System.out.println("----------PEER " + p.getID() + " ----------");
         //Inicializa a Thread que vai ficar recebendo as mensagens do grupo Multicast com o peer correspondente
-        PeerReceiveThread t = new PeerReceiveThread(p);
+        MultipeerReceiveThread t = new MultipeerReceiveThread(p);
         t.start();
     }
     

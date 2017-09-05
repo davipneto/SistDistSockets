@@ -16,11 +16,11 @@ import java.util.logging.Logger;
  *
  * @author geova
  */
-public class PeerReceiveThread extends Thread {
+public class MultipeerReceiveThread extends Thread {
     
     private Peer peer; //o peer que essa thread representa
     
-    public PeerReceiveThread (Peer peer) {
+    public MultipeerReceiveThread (Peer peer) {
         this.peer = peer;
     }
 
@@ -49,7 +49,7 @@ public class PeerReceiveThread extends Thread {
                 pmm.start();
             }
         } catch (IOException ex) {
-            Logger.getLogger(PeerReceiveThread.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MultipeerReceiveThread.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

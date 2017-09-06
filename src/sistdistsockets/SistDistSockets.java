@@ -23,7 +23,7 @@ public class SistDistSockets {
 
     /**
      * Método Principal, onde é instanciado um par e suas Threads para receber as mensagens
-     * via socket, e o usuário pode solicitar uma compra.
+     * via socket. O usuário pode solicitar uma compra e cadastrar produtos para venda.
      * @param args the command line arguments
      */
     public static void main(String[] args) {

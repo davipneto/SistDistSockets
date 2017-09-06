@@ -10,6 +10,7 @@ import java.net.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.security.*;
 
 /**
  * A classe Peer encapsula as informações de um nó da arquitetura Peer-to-Peer de redes
@@ -35,11 +36,13 @@ public class Peer {
     lista dos peers ativos no grupo, utilizada quando o indexador cai, para que o peer compare seu iD com o iD
     dos outros peers, e se o menor iD for o dele, invocara o metodo para ser elegido como indexador
     */
-    
     private ArrayList<Integer> peersOnGroup;
+    private PrivateKey privateKey;
+    private PublicKey publicKey;
     
     /**
-     * Cria um peer com id e grupo multicast especificados.
+     * Cria um peer com id e grupo multicast especificados, e gera o par de chaves pública
+     * e privada.
      * @param id o identificador do par
      * @param group o grupo Multicast ao que o par vai pertencer
      */
@@ -52,6 +55,17 @@ public class Peer {
         //inicialmente, o peer nao conhece seu indexador
         indexerPort = -1;
         indexerOn = false;
+        try {
+            //Inicializa o par de chaves do peer
+            KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
+            kpg.initialize(512);
+            KeyPair keypair = kpg.generateKeyPair();
+            privateKey = keypair.getPrivate();
+            publicKey = keypair.getPublic();
+        } catch (NoSuchAlgorithmException ex) {
+            System.out.println("Falha na geração das chaves do peer " + iD);
+            Logger.getLogger(Peer.class.getName()).log(Level.SEVERE, null, ex);
+        }
         //Instancia a TimerTask que vai ficar verificando de 5 em 5 segundos se o indexador esta vivo
         VerifyAliveIndexerTask vai = new VerifyAliveIndexerTask(this);
         Timer verifyAliveIndexerTimer = new Timer();
@@ -207,5 +221,15 @@ public class Peer {
     public void setPort(int port) {
         this.port = port;
     }
+
+    /**
+     * Retorna a chave pública do peer
+     * @return uma <i>PublicKey</i> representando a chave pública do peer
+     */
+    public PublicKey getPublicKey() {
+        return publicKey;
+    }
+    
+    
 
 }

@@ -11,6 +11,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.io.*;
 
 /**
  * Classe Principal do Projeto, onde se encontra o método main.
@@ -39,6 +40,17 @@ public class SistDistSockets {
         //Inicializa a Thread que vai ficar recebendo as mensagens do grupo Multicast com o peer correspondente
         MultipeerReceiveThread t = new MultipeerReceiveThread(p);
         t.start();
+        UnicastReceiveThread u = new UnicastReceiveThread(p);
+        u.start();
+        try {
+            Socket sock = new Socket("localhost", p.getPort());
+            DataInputStream in = new DataInputStream(sock.getInputStream());
+            DataOutputStream out = new DataOutputStream(sock.getOutputStream());
+            out.writeUTF("SERA QUE DEU CERTO ESSA MERDA??");
+        } catch (IOException ex) {
+            Logger.getLogger(SistDistSockets.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
     
 }

@@ -8,6 +8,8 @@ package sistdistsockets;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A classe Peer encapsula as informações de um nó da arquitetura Peer-to-Peer de redes
@@ -85,6 +87,25 @@ public class Peer {
             if (s != null) {
                 s.close();
             }
+        }
+    }
+    
+    /**
+     * Envia uma mensagem Unicast para a porta especifica
+     * @param message a mensagem a ser enviada
+     * @param port o número da porta 
+     */
+    public void send(String message, int port) {
+        Socket sock = null;
+        try {
+            sock = new Socket("localhost", port);
+            DataInputStream in = new DataInputStream(sock.getInputStream());
+            DataOutputStream out = new DataOutputStream(sock.getOutputStream());
+            out.writeUTF(message);
+            //provavelmente vai esperar uma mensagem de resposta
+            sock.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Peer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     

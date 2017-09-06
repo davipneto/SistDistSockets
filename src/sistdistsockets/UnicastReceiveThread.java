@@ -21,16 +21,21 @@ import java.util.logging.Logger;
 public class UnicastReceiveThread extends Thread {
     
     private Peer peer;
+    private ServerSocket listenSocket;
     
     public UnicastReceiveThread(Peer peer) {
         this.peer = peer;
+        try {
+            listenSocket = new ServerSocket(0);
+            peer.setPort(listenSocket.getLocalPort());
+        } catch (IOException ex) {
+            Logger.getLogger(UnicastReceiveThread.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     @Override
     public void run() {
         try {
-            ServerSocket listenSocket = new ServerSocket(0);
-            peer.setPort(listenSocket.getLocalPort());
             DataInputStream in;
             DataOutputStream out;
             Socket clientSocket;
@@ -40,7 +45,6 @@ public class UnicastReceiveThread extends Thread {
                 in = new DataInputStream(clientSocket.getInputStream());
                 out = new DataOutputStream(clientSocket.getOutputStream());
                 data = in.readUTF();
-                System.out.println("Dado recebido: " + data);
             }
         } catch (IOException ex) {
             Logger.getLogger(UnicastReceiveThread.class.getName()).log(Level.SEVERE, null, ex);

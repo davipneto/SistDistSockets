@@ -10,7 +10,6 @@ package sistdistsockets;
  * um determinado peer.
  * @author davi
  * @see Peer
- * @see 
  */
 public class MultipeerMessageManager extends Thread {
     

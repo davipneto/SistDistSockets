@@ -47,7 +47,7 @@ public class Message {
     /**
      * Converte este objeto para uma String colocando as informações em sequencia para enviar
      * para um socket.
-     * @return 
+     * @return uma <i>String</i> com as informações deste objeto em sequência
      */
     @Override
     public String toString() {

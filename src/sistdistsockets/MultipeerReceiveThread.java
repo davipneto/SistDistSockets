@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  * peer invocando uma instância da classe MultipeerMassageManager.
  * @author geova
  * @see Peer
- * @See MultipeerMessageManager
+ * @see MultipeerMessageManager
  */
 public class MultipeerReceiveThread extends Thread {
     

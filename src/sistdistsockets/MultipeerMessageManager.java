@@ -9,6 +9,8 @@ package sistdistsockets;
  * A classe MultipeerMessageManager é responsável por processar uma mensagem recebida para
  * um determinado peer.
  * @author davi
+ * @see Peer
+ * @see 
  */
 public class MultipeerMessageManager extends Thread {
     

@@ -17,6 +17,8 @@ import java.util.logging.Logger;
  * as mensagens que chegam para o grupo Multicast, e processá-las para um determinado
  * peer invocando uma instância da classe MultipeerMassageManager.
  * @author geova
+ * @see Peer
+ * @See MultipeerMessageManager
  */
 public class MultipeerReceiveThread extends Thread {
     

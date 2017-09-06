@@ -5,17 +5,15 @@
  */
 package sistdistsockets;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.EOFException;
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import java.util.logging.*;
 
 /**
- *
+ * A classe UnicastReceiveThread possui um ServerSocket responsável por ficar ouvindo em
+ * uma porta, e processa as mensagens recebidas para um determinado peer invocando
+ * uma instância da classe UnicastMessageManager.
  * @author davi
  */
 public class UnicastReceiveThread extends Thread {
@@ -23,6 +21,11 @@ public class UnicastReceiveThread extends Thread {
     private Peer peer;
     private ServerSocket listenSocket;
     
+    /**
+     * Cria uma UnicastReceiveThread para o peer especificado, alocando uma porta disponível
+     * para inicializar um objeto ServerSocket.
+     * @param peer o peer a ser associado com esse objeto
+     */
     public UnicastReceiveThread(Peer peer) {
         this.peer = peer;
         try {
@@ -33,6 +36,13 @@ public class UnicastReceiveThread extends Thread {
         }
     }
     
+    /**
+     * Método herdado da classe Thread. Quando chamado o método <i>start</i>, ele é invocado
+     * em uma nova thread, rodando em paralelo com os outros processos.<p>
+     * Ele invoca o método <i>accept</i> do objeto da classe ServerSocket, que bloqueia a
+     * Thread até que uma conexão seja feita, e então inicializa um objeto da classe
+     * UnicastMessageManager para processar a mensagem recebida.</p>
+     */
     @Override
     public void run() {
         try {

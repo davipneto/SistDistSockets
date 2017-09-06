@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 /**
  * A classe MultipeerReceiveThread é responsável por ficar constantemente recebendo
  * as mensagens que chegam para o grupo Multicast, e processá-las para um determinado
- * peer invocando uma instância da classe MultipeerMassageManager.
+ * peer invocando uma instância da classe MultipeerMessageManager.
  * @author geova
  * @see Peer
  * @see MultipeerMessageManager

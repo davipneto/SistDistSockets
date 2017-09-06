@@ -29,7 +29,8 @@ public class UnicastReceiveThread extends Thread {
     @Override
     public void run() {
         try {
-            ServerSocket listenSocket = new ServerSocket(peer.getPort());
+            ServerSocket listenSocket = new ServerSocket(0);
+            peer.setPort(listenSocket.getLocalPort());
             DataInputStream in;
             DataOutputStream out;
             Socket clientSocket;
@@ -37,8 +38,9 @@ public class UnicastReceiveThread extends Thread {
             while (true) {
                 clientSocket = listenSocket.accept();
                 in = new DataInputStream(clientSocket.getInputStream());
-                out =new DataOutputStream(clientSocket.getOutputStream());
+                out = new DataOutputStream(clientSocket.getOutputStream());
                 data = in.readUTF();
+                System.out.println("Dado recebido: " + data);
             }
         } catch (IOException ex) {
             Logger.getLogger(UnicastReceiveThread.class.getName()).log(Level.SEVERE, null, ex);

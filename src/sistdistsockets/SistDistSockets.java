@@ -32,11 +32,9 @@ public class SistDistSockets {
         int message;
         System.out.println("Digite o ID do peer: ");
         int id = s.nextInt();
-        System.out.println("Digite a porta: ");
-        int port = s.nextInt();
         s.nextLine();
         //Inicializa o peer com o id e porta fornecidos, e o grupo Multicast definido
-        Peer p = new Peer(id, port, group);
+        Peer p = new Peer(id, group);
         System.out.println("----------PEER " + p.getID() + "----------");
         //Inicializa a Thread que vai ficar recebendo as mensagens do grupo Multicast com o peer correspondente
         MultipeerReceiveThread t = new MultipeerReceiveThread(p);

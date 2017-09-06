@@ -37,15 +37,14 @@ public class Peer {
     private ArrayList<Integer> peersOnGroup;
     
     /**
-     * Cria um peer com id, porta e grupo multicast especificados.
+     * Cria um peer com id e grupo multicast especificados.
      * @param id o identificador do par
-     * @param port a porta para comunicação unicast
      * @param group o grupo Multicast ao que o par vai pertencer
      */
     
-    public Peer(int id, int port, String group) {
+    public Peer(int id, String group) {
         this.iD = id;
-        this.port = port;
+        this.port = -1;
         this.group = group;
         peersOnGroup = new ArrayList();
         //inicialmente, o peer nao conhece seu indexador
@@ -179,8 +178,13 @@ public class Peer {
     public void setIndexerPort(int indexerPort) {
         this.indexerPort = indexerPort;
     }
-    
-    
-    
-    
+
+    /**
+     * Seta o valor da porta para comunicação Unicast do peer.
+     * @param port um <i>int</i> indicando o valor da porta do peer
+     */
+    public void setPort(int port) {
+        this.port = port;
+    }
+
 }

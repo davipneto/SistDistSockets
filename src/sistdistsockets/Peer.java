@@ -17,7 +17,7 @@ import java.util.*;
  * fornecer as chaves públicas para comunicação unicast entre os pares, e fornecer informações
  * sobre os produtos disponíveis para venda em cada peer.</p>
  * @author davi
- * @see MulticastSocket
+ * @see java.net.MulticastSocket
  * @see MultipeerReceiveThread
  */
 
@@ -126,7 +126,7 @@ public class Peer {
     
     /**
      * Retorna a porta em que o par está escutando na comunicação Unicast.
-     * @return um valor <i>int<i> que representa a porta do par para comunicação Unicast.
+     * @return um valor <i>int</i> que representa a porta do par para comunicação Unicast.
      */
     public int getPort() {
         return port;

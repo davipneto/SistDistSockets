@@ -8,18 +8,32 @@ package sistdistsockets;
 import java.util.TimerTask;
 
 /**
- *
+ * A Classe VerifyAliveIndexerTask representa uma tarefa que encapsula um par e é executada
+ * de tempos em tempos por ele para verificar se o indexador do grupo Multicast está vivo.
+ * está vivo.
  * @author davi
+ * @see Peer
+ * @see TimerTask
  */
 
 public class VerifyAliveIndexerTask extends TimerTask {
 
     private Peer peer; //o peer que acionou essa TimerTask
 
+    /**
+     * Cria uma VerifyAliveIndexerTask para o peer informado.
+     * @param peer o peer a ser associado com essa tarefa
+     */
     public VerifyAliveIndexerTask(Peer peer) {
         this.peer = peer;
     }
     
+    /**
+     * Método herdado da classe TimerTask. Quando chamado o método <i>start</i>, ele é invocado
+     * em uma nova thread, rodando em paralelo com os outros processos.<p>
+     * Esse método verifica se o indexador está vivo, e caso não esteja, recebe informações
+     * dos outros peers do grupo para eleger um novo indexador.</p>
+     */
     @Override
     public void run() {
         //Entra nessa condiçao caso o indexador esteja vivo

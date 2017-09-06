@@ -8,7 +8,8 @@ package sistdistsockets;
 import java.util.Scanner;
 
 /**
- *
+ * A classe Message encapsula os dados das mensagens trocadas no grupo Multicast,
+ * e guarda o iD do par que enviou a mensagem.
  * @author davi
  */
 public class Message {
@@ -17,15 +18,25 @@ public class Message {
     private int length;
     private String message;
 
-    //inicializa um objeto a partir do id do rementente, e a mensagem em si informados de forma separada
+    /**
+     * Cria uma Message com o id do rementente, o tamanho da mensagem, e a mensagem em si
+     * especificados.
+     * @param senderID um <i>int</i> representando o identificador do remetente
+     * @param length um <i>int</i> contendo o tamanho da mensagem
+     * @param message uma <i>String</i> com a mensagem
+     */
+    
     public Message(int senderID, int length, String message) {
         this.senderID = senderID;
         this.length = length;
         this.message = message;
     }
     
-    //a partir de uma String com todas as informacoes em sequencia, recebidos no buffer do datagrama de recebimento
-    //separa as informacoes e inicializa o objeto
+    /**
+     * Cria uma Message a partir de uma String com todas as informações em sequência
+     * recebida no buffer do datagrama de recebimento.
+     * @param s a <i>String recebida no buffer</i>
+     */
     public Message(String s) {
         Scanner sc = new Scanner(s);
         this.senderID = sc.nextInt();
@@ -33,20 +44,36 @@ public class Message {
         this.message = sc.next().substring(0, length);
     }
     
-    //gera a string a ser enviada pelo buffer com as informacoes en sequencia
+    /**
+     * Converte este objeto para uma String colocando as informações em sequencia para enviar
+     * para um socket.
+     * @return 
+     */
     @Override
     public String toString() {
         return senderID + " " + length + " " + message;
     }
-
+    
+    /**
+     * Retorna o iD do par que enviou a mensagem.
+     * @return um <i>int</i> representando o identificador do par remetente
+     */
     public int getSenderID() {
         return senderID;
     }
 
+    /**
+     * Retorna o tamanho da mensagem.
+     * @return um <i>int</i> contendo o tamanho da mensagem
+     */
     public int getLength() {
         return length;
     }
 
+    /**
+     * Retorna a mensagem.
+     * @return uma <i>String</i> com a mensagem
+     */
     public String getMessage() {
         return message;
     }

@@ -13,7 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * Classe Principal do Projeto, onde se encontra o método main.
  * @author davi
  */
 public class SistDistSockets {
@@ -21,6 +21,8 @@ public class SistDistSockets {
     static final String group = "226.2.2.5";
 
     /**
+     * Método Principal, onde é instanciado um par e suas Threads para receber as mensagens
+     * via socket, e o usuário pode solicitar uma compra.
      * @param args the command line arguments
      */
     public static void main(String[] args) {
@@ -35,7 +37,7 @@ public class SistDistSockets {
         s.nextLine();
         //Inicializa o peer com o id e porta fornecidos, e o grupo Multicast definido
         Peer p = new Peer(id, port, group);
-        System.out.println("----------PEER " + p.getID() + " ----------");
+        System.out.println("----------PEER " + p.getID() + "----------");
         //Inicializa a Thread que vai ficar recebendo as mensagens do grupo Multicast com o peer correspondente
         MultipeerReceiveThread t = new MultipeerReceiveThread(p);
         t.start();

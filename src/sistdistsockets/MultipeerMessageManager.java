@@ -6,7 +6,8 @@
 package sistdistsockets;
 
 /**
- *
+ * A classe MultipeerMessageManager é responsável por processar uma mensagem recebida para
+ * um determinado peer.
  * @author davi
  */
 public class MultipeerMessageManager extends Thread {
@@ -15,13 +16,23 @@ public class MultipeerMessageManager extends Thread {
     private String message; //a mensagem recebida
     private int senderID; // o id do peer que enviou a mensagem
 
+    /**
+     * Cria uma MultipeerMessageManager para o peer e uma message especificada
+     * @param peer o par associado com esse objeto
+     * @param message uma <i>Message</i> contendo os dados da mensagem recebida
+     */
     public MultipeerMessageManager(Peer peer, Message message) {
         this.peer = peer;
         this.message = message.getMessage();
         this.senderID = message.getSenderID();
     }
     
-    //processa a mensagem recebida
+    /**
+     * Método herdado da classe Thread. Quando chamado o método <i>start</i>, ele é invocado
+     * em uma nova thread, rodando em paralelo com os outros processos.<p>
+     * Esse método analisa a mensagem recebida e coordenada as ações a serem executadas
+     * pelo peer associado.</p>
+     */
     @Override
     public void run() {
         //protecao para evitar nullPointerException

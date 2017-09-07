@@ -9,6 +9,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.logging.*;
+import java.security.*;
 
 /**
  * A classe UnicastReceiveThread possui um ServerSocket responsável por ficar ouvindo em
@@ -46,17 +47,21 @@ public class UnicastReceiveThread extends Thread {
     @Override
     public void run() {
         try {
-            DataInputStream in;
-            DataOutputStream out;
+            ObjectOutputStream out;
+            ObjectInputStream in;
             Socket clientSocket;
-            String data;
+            Message data;
             while (true) {
                 clientSocket = listenSocket.accept();
-                in = new DataInputStream(clientSocket.getInputStream());
-                out = new DataOutputStream(clientSocket.getOutputStream());
-                data = in.readUTF();
+                out = new ObjectOutputStream(clientSocket.getOutputStream());
+                in = new ObjectInputStream(clientSocket.getInputStream());
+                data = (Message) in.readObject();
+                UnicastMessageManager umm = new UnicastMessageManager(peer, data);
+                umm.start();
             }
         } catch (IOException ex) {
+            Logger.getLogger(UnicastReceiveThread.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
             Logger.getLogger(UnicastReceiveThread.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

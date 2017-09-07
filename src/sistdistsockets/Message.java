@@ -6,16 +6,16 @@
 package sistdistsockets;
 
 import java.util.Scanner;
+import java.io.*;
 
 /**
  * A classe Message encapsula os dados das mensagens trocadas no grupo Multicast,
  * e guarda o iD do par que enviou a mensagem.
  * @author davi
  */
-public class Message {
+public class Message implements Serializable {
     
     private int senderID;
-    private int length;
     private String message;
 
     /**
@@ -26,9 +26,8 @@ public class Message {
      * @param message uma <i>String</i> com a mensagem
      */
     
-    public Message(int senderID, int length, String message) {
+    public Message(int senderID, String message) {
         this.senderID = senderID;
-        this.length = length;
         this.message = message;
     }
     
@@ -40,7 +39,7 @@ public class Message {
     public Message(String s) {
         Scanner sc = new Scanner(s);
         this.senderID = sc.nextInt();
-        this.length = sc.nextInt();
+        int length = sc.nextInt();
         this.message = sc.next().substring(0, length);
     }
     
@@ -51,7 +50,7 @@ public class Message {
      */
     @Override
     public String toString() {
-        return senderID + " " + length + " " + message;
+        return senderID + " " + message.length() + " " + message;
     }
     
     /**
@@ -60,14 +59,6 @@ public class Message {
      */
     public int getSenderID() {
         return senderID;
-    }
-
-    /**
-     * Retorna o tamanho da mensagem.
-     * @return um <i>int</i> contendo o tamanho da mensagem
-     */
-    public int getLength() {
-        return length;
     }
 
     /**

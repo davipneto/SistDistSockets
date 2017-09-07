@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.*;
+import java.security.PublicKey;
 
 /**
  * Classe Principal do Projeto, onde se encontra o método main.
@@ -29,8 +30,6 @@ public class SistDistSockets {
     public static void main(String[] args) {
         System.setProperty("java.net.preferIPv4Stack", "true");
         Scanner s = new Scanner(System.in);
-        String mess;
-        int message;
         System.out.println("Digite o ID do peer: ");
         int id = s.nextInt();
         s.nextLine();
@@ -42,15 +41,7 @@ public class SistDistSockets {
         t.start();
         UnicastReceiveThread u = new UnicastReceiveThread(p);
         u.start();
-        try {
-            Socket sock = new Socket("localhost", p.getPort());
-            DataInputStream in = new DataInputStream(sock.getInputStream());
-            DataOutputStream out = new DataOutputStream(sock.getOutputStream());
-            out.writeUTF("SERA QUE DEU CERTO ESSA MERDA??");
-        } catch (IOException ex) {
-            Logger.getLogger(SistDistSockets.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
+        System.out.println("Porta: " + p.getPort()); 
     }
     
 }

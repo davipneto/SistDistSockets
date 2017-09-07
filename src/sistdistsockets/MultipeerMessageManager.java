@@ -50,7 +50,9 @@ public class MultipeerMessageManager extends Thread {
                 peer.setIndexerPort(port);
                 System.out.println("Porta do indexador: " + port);
                 peer.getPeersOnGroup().clear();
-                //enviar dados necessários
+                //enviar chave publica
+                PublicKeyMessage mess = new PublicKeyMessage(peer.getID(), "myKey", peer.getPublicKey());
+                peer.send(mess, port);
             }
         //mensagem indicando o novo indexador e suaa porta unicast
         } else
@@ -61,7 +63,9 @@ public class MultipeerMessageManager extends Thread {
             peer.setIndexerPort(port);
             System.out.println("Porta do indexador: " + port);
             peer.getPeersOnGroup().clear();
-            //enviar dados necessários
+            //enviar chave publica
+            PublicKeyMessage mess = new PublicKeyMessage(peer.getID(), "myKey", peer.getPublicKey());
+            peer.send(mess, port);
         //mensagem para comunicacao entre os peers quando nao ha indexador, para realizar a eleicao do mesmo
         } else
         if (message.equals("hi")) {

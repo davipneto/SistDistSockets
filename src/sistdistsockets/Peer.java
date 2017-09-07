@@ -37,8 +37,10 @@ public class Peer {
     dos outros peers, e se o menor iD for o dele, invocara o metodo para ser elegido como indexador
     */
     private ArrayList<Integer> peersOnGroup;
+    private Set<Produto> produtos;
     private PrivateKey privateKey;
     private PublicKey publicKey;
+    private Map<Integer,PublicKey> peers;
     
     /**
      * Cria um peer com id e grupo multicast especificados, e gera o par de chaves pública
@@ -55,6 +57,8 @@ public class Peer {
         //inicialmente, o peer nao conhece seu indexador
         indexerPort = -1;
         indexerOn = false;
+        produtos = new HashSet();
+        peers = new HashMap();
         try {
             //Inicializa o par de chaves do peer
             KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
@@ -72,8 +76,6 @@ public class Peer {
         verifyAliveIndexerTimer.scheduleAtFixedRate(vai, 5000, 5000);
     }
     
-    
-    
     /**
      * Envia uma mensagem para o grupo Multicast.
      * @param message a mensagem a ser enviada
@@ -87,7 +89,7 @@ public class Peer {
             InetAddress inetGroup = InetAddress.getByName(group);
             s.joinGroup(inetGroup);
             //envia a mensagem e deixa o grupo
-            Message m = new Message(iD, message.length(), message);
+            Message m = new Message(iD, message);
             message = m.toString();
             DatagramPacket messageOut = new DatagramPacket(message.getBytes(), message.getBytes().length, inetGroup, 6789);
             s.send(messageOut);
@@ -109,17 +111,16 @@ public class Peer {
      * @param message a mensagem a ser enviada
      * @param port o número da porta 
      */
-    public void send(String message, int port) {
+    public void send(Message message, int port) {
         Socket sock = null;
         try {
             sock = new Socket("localhost", port);
-            DataInputStream in = new DataInputStream(sock.getInputStream());
-            DataOutputStream out = new DataOutputStream(sock.getOutputStream());
-            out.writeUTF(message);
-            //provavelmente vai esperar uma mensagem de resposta
-            sock.close();
+            ObjectOutputStream out = new ObjectOutputStream(sock.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(sock.getInputStream());
+            out.writeObject(message);
+            //esperar a resposta
         } catch (IOException ex) {
-            Logger.getLogger(Peer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SistDistSockets.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -228,6 +229,14 @@ public class Peer {
      */
     public PublicKey getPublicKey() {
         return publicKey;
+    }
+    
+    public void setKeyForAPeer (int iD, PublicKey key) {
+        peers.put(iD, key);
+    }
+
+    public Map<Integer, PublicKey> getPeers() {
+        return peers;
     }
     
     

@@ -11,6 +11,9 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.security.*;
+import javax.crypto.AEADBadTagException.*;
+import javax.crypto.Cipher;
+import javax.crypto.NoSuchPaddingException;
 
 /**
  * A classe Peer encapsula as informações de um nó da arquitetura Peer-to-Peer de redes

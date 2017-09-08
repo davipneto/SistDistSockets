@@ -29,6 +29,11 @@ public class SistDistSockets {
      */
     public static void main(String[] args) {
         System.setProperty("java.net.preferIPv4Stack", "true");
+        try {
+            System.out.println("IP da maquina: " + InetAddress.getLocalHost().getHostAddress());
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(SistDistSockets.class.getName()).log(Level.SEVERE, null, ex);
+        }
         Scanner s = new Scanner(System.in);
         System.out.println("Digite o ID do peer: ");
         int id = s.nextInt();
@@ -42,6 +47,7 @@ public class SistDistSockets {
         UnicastReceiveThread u = new UnicastReceiveThread(p);
         u.start();
         System.out.println("Porta: " + p.getPort()); 
+        
     }
     
 }

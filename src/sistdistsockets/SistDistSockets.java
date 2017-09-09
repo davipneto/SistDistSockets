@@ -5,6 +5,7 @@
  */
 package sistdistsockets;
 
+import frames.CompraEVenda;
 import java.io.IOException;
 import java.net.*;
 import java.util.*;
@@ -13,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.*;
 import java.security.PublicKey;
+import javax.swing.JOptionPane;
 
 /**
  * Classe Principal do Projeto, onde se encontra o método main.
@@ -34,10 +36,14 @@ public class SistDistSockets {
         } catch (UnknownHostException ex) {
             Logger.getLogger(SistDistSockets.class.getName()).log(Level.SEVERE, null, ex);
         }
-        Scanner s = new Scanner(System.in);
+        /*Scanner s = new Scanner(System.in);
         System.out.println("Digite o ID do peer: ");
         int id = s.nextInt();
         s.nextLine();
+        System.out.println("id" + id);
+        */
+        int id = Integer.parseInt(JOptionPane.showInputDialog(null, "Digite o ID do peer: "));
+        
         //Inicializa o peer com o id e porta fornecidos, e o grupo Multicast definido
         Peer p = new Peer(id, group);
         System.out.println("----------PEER " + p.getID() + "----------");
@@ -47,7 +53,11 @@ public class SistDistSockets {
         UnicastReceiveThread u = new UnicastReceiveThread(p);
         u.start();
         System.out.println("Porta: " + p.getPort()); 
-        
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new CompraEVenda().setVisible(true);
+            }
+        });
     }
     
 }

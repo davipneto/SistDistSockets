@@ -5,6 +5,10 @@
  */
 package frames;
 
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import sistdistsockets.*;
+
 /**
  *
  * @author geova
@@ -16,12 +20,17 @@ public class CompraEVenda extends javax.swing.JFrame {
      */
     boolean venda = false;
     boolean compra = false;
-    public CompraEVenda() {
+    private Peer peer;
+
+    public CompraEVenda(Peer peer) {
         initComponents();
         jInternalFrame1.setVisible(false);
         jInternalFrame2.setVisible(false);
         jInternalFrame3.setVisible(false);
-               
+        jInternalFrame4.setVisible(true);
+        this.peer = peer;
+        setUpTable();
+        this.setTitle("Peer " + peer.getID());
         /*jLabel1.setVisible(false);
         jLabel2.setVisible(false);
         jLabel3.setVisible(false);
@@ -45,6 +54,7 @@ public class CompraEVenda extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jMenuItem1 = new javax.swing.JMenuItem();
         jInternalFrame1 = new javax.swing.JInternalFrame();
         BVenda = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
@@ -56,19 +66,26 @@ public class CompraEVenda extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         DescCompra = new javax.swing.JTextField();
         BPesquisa = new javax.swing.JButton();
-        jInternalFrame3 = new javax.swing.JInternalFrame();
+        jInternalFrame4 = new javax.swing.JInternalFrame();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        BComprar = new javax.swing.JButton();
+        BAtualizar = new javax.swing.JButton();
+        BExcluir = new javax.swing.JButton();
+        jInternalFrame3 = new javax.swing.JInternalFrame();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTable2 = new javax.swing.JTable();
+        BComprar1 = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
+
+        jMenuItem1.setText("jMenuItem1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Compra e Venda");
 
         jInternalFrame1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jInternalFrame1.setTitle("Venda");
+        jInternalFrame1.setTitle("Novos Produtos");
         jInternalFrame1.setVisible(true);
 
         BVenda.setText("Vender");
@@ -119,7 +136,7 @@ public class CompraEVenda extends javax.swing.JFrame {
                     .addComponent(PrecoVenda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(BVenda)
-                .addGap(0, 69, Short.MAX_VALUE))
+                .addGap(0, 23, Short.MAX_VALUE))
         );
 
         jInternalFrame2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -159,14 +176,77 @@ public class CompraEVenda extends javax.swing.JFrame {
                     .addComponent(DescCompra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(BPesquisa)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(0, 37, Short.MAX_VALUE))
+        );
+
+        jInternalFrame4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jInternalFrame4.setResizable(true);
+        jInternalFrame4.setTitle("Produtos à Venda");
+        jInternalFrame4.setVisible(true);
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Descrição", "Preço"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(jTable1);
+
+        BAtualizar.setText("Atualizar Produto");
+        BAtualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BAtualizarActionPerformed(evt);
+            }
+        });
+
+        BExcluir.setText("Excluir Produto");
+        BExcluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BExcluirActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jInternalFrame4Layout = new javax.swing.GroupLayout(jInternalFrame4.getContentPane());
+        jInternalFrame4.getContentPane().setLayout(jInternalFrame4Layout);
+        jInternalFrame4Layout.setHorizontalGroup(
+            jInternalFrame4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jInternalFrame4Layout.createSequentialGroup()
+                .addGap(23, 23, 23)
+                .addGroup(jInternalFrame4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jInternalFrame4Layout.createSequentialGroup()
+                        .addComponent(BAtualizar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(BExcluir))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jInternalFrame4Layout.setVerticalGroup(
+            jInternalFrame4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jInternalFrame4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jInternalFrame4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(BAtualizar)
+                    .addComponent(BExcluir))
+                .addGap(0, 36, Short.MAX_VALUE))
         );
 
         jInternalFrame3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jInternalFrame3.setTitle("Pesquisa");
         jInternalFrame3.setVisible(true);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null}
             },
@@ -189,9 +269,12 @@ public class CompraEVenda extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane2.setViewportView(jTable2);
+        if (jTable2.getColumnModel().getColumnCount() > 0) {
+            jTable2.getColumnModel().getColumn(2).setHeaderValue("ID Vendedor");
+        }
 
-        BComprar.setText("Comprar");
+        BComprar1.setText("Comprar");
 
         javax.swing.GroupLayout jInternalFrame3Layout = new javax.swing.GroupLayout(jInternalFrame3.getContentPane());
         jInternalFrame3.getContentPane().setLayout(jInternalFrame3Layout);
@@ -201,23 +284,23 @@ public class CompraEVenda extends javax.swing.JFrame {
                 .addGroup(jInternalFrame3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jInternalFrame3Layout.createSequentialGroup()
                         .addGap(23, 23, 23)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jInternalFrame3Layout.createSequentialGroup()
                         .addGap(198, 198, 198)
-                        .addComponent(BComprar)))
-                .addContainerGap(49, Short.MAX_VALUE))
+                        .addComponent(BComprar1)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jInternalFrame3Layout.setVerticalGroup(
             jInternalFrame3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jInternalFrame3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 52, Short.MAX_VALUE)
-                .addComponent(BComprar)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
+                .addComponent(BComprar1)
                 .addGap(25, 25, 25))
         );
 
-        jMenu1.setText("Venda");
+        jMenu1.setText("Novos Produtos");
         jMenu1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jMenu1MouseClicked(evt);
@@ -234,27 +317,38 @@ public class CompraEVenda extends javax.swing.JFrame {
         jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
+        jMenuBar1.getAccessibleContext().setAccessibleName("Novos Produtos");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jInternalFrame1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jInternalFrame2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addComponent(jInternalFrame3)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jInternalFrame1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jInternalFrame2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jInternalFrame4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(10, 10, 10))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(jInternalFrame3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addComponent(jInternalFrame4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jInternalFrame1)
                     .addComponent(jInternalFrame2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jInternalFrame3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        jInternalFrame1.getAccessibleContext().setAccessibleName("Novos Produtos");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -264,14 +358,14 @@ public class CompraEVenda extends javax.swing.JFrame {
         DescCompra.setText("");
         DescVenda.setText("");
         PrecoVenda.setText("");
-        if(venda == false){
+        if (venda == false) {
             venda = true;
             jInternalFrame1.setVisible(true);
-            
+
             compra = false;
             jInternalFrame2.setVisible(false);
             jInternalFrame3.setVisible(false);
-            
+
         }
     }//GEN-LAST:event_jMenu1MouseClicked
 
@@ -280,31 +374,77 @@ public class CompraEVenda extends javax.swing.JFrame {
         DescCompra.setText("");
         DescVenda.setText("");
         PrecoVenda.setText("");
-        if(compra == false){
+        if (compra == false) {
             compra = true;
             jInternalFrame2.setVisible(true);
-            
             venda = false;
             jInternalFrame1.setVisible(false);
-            
         }
+
+
     }//GEN-LAST:event_jMenu2MouseClicked
 
     private void BVendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BVendaActionPerformed
-        // TODO add your handling code here:
-        String Descricao = DescVenda.getText();
-        String Preco = PrecoVenda.getText();
-        //enviar para a thread do indexador
+        String descricao = DescVenda.getText();
+        double preco = Double.parseDouble(PrecoVenda.getText().replace(',', '.'));
+        //atualizar o set de produtos do peer
+        Product prod = new Product(descricao, preco);
+        peer.setProduct(prod);
+        //enviar para o indexador o novo produto
+        if (peer.getIndexerPort() != -1) {
+            ProductMessage pm = new ProductMessage(peer.getID(), "myProduct", prod);
+            peer.send(pm, peer.getIndexerPort());
+        }
+        //atualizar a tabela de produtos
+        setUpTable();
+        //limpar caixa de textos
+        DescVenda.setText("");
+        PrecoVenda.setText("");
     }//GEN-LAST:event_BVendaActionPerformed
 
     private void BPesquisaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BPesquisaActionPerformed
         // TODO add your handling code here:
-        String Pesq = DescCompra.getText();
+        String pesq = DescCompra.getText();
         //enviar para pesquisar na thread do indexador se há o produto
+        Object o = peer.sendBuyRequest(pesq,peer.getIndexerPort());
         //se houver um preencher a tabela e habilitar o botão de comprar7
         jInternalFrame3.setVisible(true);
-        
+
     }//GEN-LAST:event_BPesquisaActionPerformed
+
+    private void BAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BAtualizarActionPerformed
+        //Pega os dados do produto selecionado na tabela
+        if (jTable2.getSelectedRow() == -1) {
+            JOptionPane.showMessageDialog(null, "Nenhum produto selecionado!");
+        } else {
+            String descricao = jTable2.getValueAt(jTable2.getSelectedRow(), 0).toString();
+            double preco = Double.parseDouble(jTable2.getValueAt(jTable2.getSelectedRow(), 1).toString());
+            //atualiza o set de produtos do peer
+        }
+
+    }//GEN-LAST:event_BAtualizarActionPerformed
+
+    private void BExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BExcluirActionPerformed
+        //Pega os dados do produto selecionado na tabela
+        if (jTable2.getSelectedRow() == -1) {
+            JOptionPane.showMessageDialog(null, "Nenhum produto selecionado!");
+        } else {
+            String descricao = jTable2.getValueAt(jTable2.getSelectedRow(), 0).toString();
+            double preco = Double.parseDouble(jTable2.getValueAt(jTable2.getSelectedRow(), 1).toString());
+        }
+
+    }//GEN-LAST:event_BExcluirActionPerformed
+
+    void setUpTable() {
+        DefaultTableModel tableModel = (DefaultTableModel) jTable1.getModel();
+        //atualizar a tabela a partir dos dados em produtos
+        tableModel.setRowCount(0);
+        for (Product p: peer.getProdutos()) {
+            tableModel.addRow(new Object[]{p.getDescricao(),p.getPreco2()});
+        }
+        jTable1.setModel(tableModel);
+        tableModel.fireTableDataChanged();
+    }
 
     /**
      * @param args the command line arguments
@@ -335,15 +475,17 @@ public class CompraEVenda extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
+ /*java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CompraEVenda().setVisible(true);
+                new CompraEVenda(peer).setVisible(true);
             }
-        });
+        });*/
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton BComprar;
+    private javax.swing.JButton BAtualizar;
+    private javax.swing.JButton BComprar1;
+    private javax.swing.JButton BExcluir;
     private javax.swing.JButton BPesquisa;
     private javax.swing.JButton BVenda;
     private javax.swing.JTextField DescCompra;
@@ -352,6 +494,7 @@ public class CompraEVenda extends javax.swing.JFrame {
     private javax.swing.JInternalFrame jInternalFrame1;
     private javax.swing.JInternalFrame jInternalFrame2;
     private javax.swing.JInternalFrame jInternalFrame3;
+    private javax.swing.JInternalFrame jInternalFrame4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -359,7 +502,10 @@ public class CompraEVenda extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
+    private javax.swing.JTable jTable2;
     // End of variables declaration//GEN-END:variables
 }

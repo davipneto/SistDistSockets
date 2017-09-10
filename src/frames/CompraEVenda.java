@@ -405,11 +405,14 @@ public class CompraEVenda extends javax.swing.JFrame {
     private void BPesquisaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BPesquisaActionPerformed
         // TODO add your handling code here:
         String pesq = DescCompra.getText();
-        Message m = new Message(peer.getID(), "wannabuy" + pesq);
-        //enviar para pesquisar na thread do indexador se há o produto
-        Object o = peer.sendBuyRequest(m,peer.getIndexerPort());
-        //se houver um preencher a tabela e habilitar o botão de comprar7
-        jInternalFrame3.setVisible(true);
+        if (peer.getIndexerPort() != -1) {
+            Message m = new Message(peer.getID(), "wannabuy" + pesq);
+            //enviar para pesquisar na thread do indexador se há o produto
+            Object o = peer.sendBuyRequest(m, peer.getIndexerPort());
+            //se houver um preencher a tabela e habilitar o botão de comprar7
+            jInternalFrame3.setVisible(true);
+        }
+
 
     }//GEN-LAST:event_BPesquisaActionPerformed
 
@@ -440,8 +443,8 @@ public class CompraEVenda extends javax.swing.JFrame {
         DefaultTableModel tableModel = (DefaultTableModel) jTable1.getModel();
         //atualizar a tabela a partir dos dados em produtos
         tableModel.setRowCount(0);
-        for (Product p: peer.getProdutos()) {
-            tableModel.addRow(new Object[]{p.getDescricao(),p.getPreco2()});
+        for (Product p : peer.getProdutos()) {
+            tableModel.addRow(new Object[]{p.getDescricao(), p.getPreco2()});
         }
         jTable1.setModel(tableModel);
         tableModel.fireTableDataChanged();

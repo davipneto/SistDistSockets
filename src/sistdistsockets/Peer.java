@@ -123,13 +123,26 @@ public class Peer {
             ObjectOutputStream out = new ObjectOutputStream(sock.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(sock.getInputStream());
             out.writeObject(message);
-            //esperar a resposta
         } catch (IOException ex) {
             Logger.getLogger(SistDistSockets.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
-    public Object sendBuyRequest(Message message, int port){
+    public Map<Integer,Product> sendBuyRequest(Message message, int port){
+        Socket sock = null;
+        try {
+            sock = new Socket("localhost", port);
+            ObjectOutputStream out = new ObjectOutputStream(sock.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(sock.getInputStream());
+            out.writeObject(message);
+            //esperar a resposta
+            Map answer = (Map) in.readObject();
+            return answer;
+        } catch (IOException ex) {
+            Logger.getLogger(SistDistSockets.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Peer.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return null;
     }
     
@@ -198,6 +211,10 @@ public class Peer {
      */
     public ArrayList<Integer> getPeersOnGroup() {
         return peersOnGroup;
+    }
+
+    public Map<Integer, Set<Product>> getPeersProducts() {
+        return peersProducts;
     }
 
     /**

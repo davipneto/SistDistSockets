@@ -129,7 +129,7 @@ public class Peer {
         }
     }
     
-    public Object sendBuyRequest(String message, int port){
+    public Object sendBuyRequest(Message message, int port){
         return null;
     }
     

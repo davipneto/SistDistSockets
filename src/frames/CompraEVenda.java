@@ -78,7 +78,7 @@ public class CompraEVenda extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setText("Produto");
+        jLabel1.setText("Novo Produto");
 
         jLabel2.setText("Descrição: ");
 
@@ -119,7 +119,7 @@ public class CompraEVenda extends javax.swing.JFrame {
                     .addComponent(PrecoVenda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(BVenda)
-                .addGap(0, 66, Short.MAX_VALUE))
+                .addGap(0, 69, Short.MAX_VALUE))
         );
 
         jInternalFrame2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -212,7 +212,7 @@ public class CompraEVenda extends javax.swing.JFrame {
             .addGroup(jInternalFrame3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 114, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 52, Short.MAX_VALUE)
                 .addComponent(BComprar)
                 .addGap(25, 25, 25))
         );

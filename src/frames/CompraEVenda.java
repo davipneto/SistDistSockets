@@ -405,8 +405,9 @@ public class CompraEVenda extends javax.swing.JFrame {
     private void BPesquisaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BPesquisaActionPerformed
         // TODO add your handling code here:
         String pesq = DescCompra.getText();
+        Message m = new Message(peer.getID(), "wannabuy" + pesq);
         //enviar para pesquisar na thread do indexador se há o produto
-        Object o = peer.sendBuyRequest(pesq,peer.getIndexerPort());
+        Object o = peer.sendBuyRequest(m,peer.getIndexerPort());
         //se houver um preencher a tabela e habilitar o botão de comprar7
         jInternalFrame3.setVisible(true);
 

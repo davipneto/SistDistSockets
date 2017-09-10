@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package sistdistsockets;
+import java.text.*;
 
 /**
  *
@@ -27,6 +28,10 @@ public class Product {
         return preco;
     }
     
-    
+    @Override
+    public String toString() {
+        NumberFormat formatter = new DecimalFormat("#0.00");     
+        return (descricao + formatter.format(preco));
+    }
     
 }

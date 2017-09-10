@@ -26,6 +26,11 @@ public class UnicastMessageManager extends Thread {
             PublicKeyMessage mess = (PublicKeyMessage) message;
             peer.setKeyForAPeer(message.getSenderID(), mess.getPublicKey());
             System.out.println("Recebi a chave publica do peer " + message.getSenderID());
+        } else
+        if (message.getMessage().equals("myProduct")) {
+            ProductMessage mess = (ProductMessage) message;
+            peer.setProductForAPeer(message.getSenderID(), mess.getProduct());
+            System.out.println("Recebi um produto do peer " + message.getSenderID() + ": " + mess.getProduct());
         }
         
     }

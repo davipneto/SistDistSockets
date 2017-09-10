@@ -44,6 +44,7 @@ public class Peer {
     private PrivateKey privateKey;
     private PublicKey publicKey;
     private Map<Integer,PublicKey> peers;
+    private Map<Integer,Set<Product>> peersProducts;
     
     /**
      * Cria um peer com id e grupo multicast especificados, e gera o par de chaves pública
@@ -62,6 +63,7 @@ public class Peer {
         indexerOn = false;
         produtos = new HashSet();
         peers = new HashMap();
+        peersProducts = new HashMap();
         try {
             //Inicializa o par de chaves do peer
             KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
@@ -240,6 +242,14 @@ public class Peer {
     
     public void setKeyForAPeer (int iD, PublicKey key) {
         peers.put(iD, key);
+    }
+    
+    public void setProductForAPeer (int iD, Product product) {
+       if (!peersProducts.containsKey(iD)) {
+           peersProducts.put(iD, new HashSet());
+       }
+       Set products = peersProducts.get(iD);
+       products.add(product);
     }
 
     public Map<Integer, PublicKey> getPeers() {

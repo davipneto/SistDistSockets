@@ -53,6 +53,11 @@ public class MultipeerMessageManager extends Thread {
                 //enviar chave publica
                 PublicKeyMessage mess = new PublicKeyMessage(peer.getID(), "myKey", peer.getPublicKey());
                 peer.send(mess, port);
+                //enviar informacoes de venda
+                for (Product product: peer.getProdutos()) {
+                    ProductMessage pmess = new ProductMessage(peer.getID(), "myProduct", product);
+                    peer.send(pmess, port);
+                }
             }
         //mensagem indicando o novo indexador e suaa porta unicast
         } else
@@ -66,6 +71,11 @@ public class MultipeerMessageManager extends Thread {
             //enviar chave publica
             PublicKeyMessage mess = new PublicKeyMessage(peer.getID(), "myKey", peer.getPublicKey());
             peer.send(mess, port);
+            //enviar informacoes de venda
+            for (Product product: peer.getProdutos()) {
+                ProductMessage pmess = new ProductMessage(peer.getID(), "myProduct", product);
+                peer.send(pmess, port);
+            }
         //mensagem para comunicacao entre os peers quando nao ha indexador, para realizar a eleicao do mesmo
         } else
         if (message.equals("hi")) {

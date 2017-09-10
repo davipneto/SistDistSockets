@@ -40,7 +40,7 @@ public class Peer {
     dos outros peers, e se o menor iD for o dele, invocara o metodo para ser elegido como indexador
     */
     private ArrayList<Integer> peersOnGroup;
-    private Set<Produto> produtos;
+    private Set<Product> produtos;
     private PrivateKey privateKey;
     private PublicKey publicKey;
     private Map<Integer,PublicKey> peers;
@@ -232,6 +232,10 @@ public class Peer {
      */
     public PublicKey getPublicKey() {
         return publicKey;
+    }
+
+    public Set<Product> getProdutos() {
+        return produtos;
     }
     
     public void setKeyForAPeer (int iD, PublicKey key) {

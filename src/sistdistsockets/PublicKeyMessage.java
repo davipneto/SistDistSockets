@@ -12,14 +12,14 @@ import java.security.*;
  */
 public class PublicKeyMessage extends Message {
     
-    private PublicKey publicKey;
+    private PeerAnswer publicKey;
     
-    public PublicKeyMessage(int senderID, String message, PublicKey publicKey) {
+    public PublicKeyMessage(int senderID, String message, PeerAnswer publicKey) {
         super(senderID, message);
         this.publicKey = publicKey;
     }
 
-    public PublicKey getPublicKey() {
+    public PeerAnswer getPublicKey() {
         return publicKey;
     }
     

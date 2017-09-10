@@ -30,6 +30,7 @@ import javax.crypto.NoSuchPaddingException;
 public class Peer {
     
     private int iD;
+    private String ip;
     private int port;
     private String group;
     //variável setada em true quando o peer recebe a mensagem indicando que o indexador está vivo
@@ -43,7 +44,7 @@ public class Peer {
     private Set<Product> produtos;
     private PrivateKey privateKey;
     private PublicKey publicKey;
-    private Map<Integer,PublicKey> peers;
+    private Map<Integer,PeerAnswer> peers;
     private Map<Integer,Set<Product>> peersProducts;
     
     /**
@@ -65,6 +66,7 @@ public class Peer {
         peers = new HashMap();
         peersProducts = new HashMap();
         try {
+            this.ip = InetAddress.getLocalHost().getHostAddress();
             //Inicializa o par de chaves do peer
             KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
             kpg.initialize(512);
@@ -73,6 +75,8 @@ public class Peer {
             publicKey = keypair.getPublic();
         } catch (NoSuchAlgorithmException ex) {
             System.out.println("Falha na geração das chaves do peer " + iD);
+            Logger.getLogger(Peer.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (UnknownHostException ex) {
             Logger.getLogger(Peer.class.getName()).log(Level.SEVERE, null, ex);
         }
         //Instancia a TimerTask que vai ficar verificando de 5 em 5 segundos se o indexador esta vivo
@@ -146,7 +150,7 @@ public class Peer {
         return null;
     }
     
-    public PublicKey sendBuy(int id){
+    public PeerAnswer sendBuy(int id){
         Socket sock = null;
         Message m = new Message(this.iD, "wannaKey"+id);
         try {
@@ -155,7 +159,7 @@ public class Peer {
             ObjectInputStream in = new ObjectInputStream(sock.getInputStream());
             out.writeObject(m);
             //esperar a resposta
-            PublicKey panswer = (PublicKey) in.readObject();
+            PeerAnswer panswer = (PeerAnswer) in.readObject();
             return panswer;
         } catch (IOException ex) {
             Logger.getLogger(SistDistSockets.class.getName()).log(Level.SEVERE, null, ex);
@@ -281,12 +285,16 @@ public class Peer {
     public Set<Product> getProdutos() {
         return produtos;
     }
-    
+
+    public String getIp() {
+        return ip;
+    }
+
     public void setProduct(Product product){
         produtos.add(product);
     }
     
-    public void setKeyForAPeer (int iD, PublicKey key) {
+    public void setKeyForAPeer (int iD, PeerAnswer key) {
         peers.put(iD, key);
     }
     
@@ -298,7 +306,7 @@ public class Peer {
        products.add(product);
     }
 
-    public Map<Integer, PublicKey> getPeers() {
+    public Map<Integer, PeerAnswer> getPeers() {
         return peers;
     }
     

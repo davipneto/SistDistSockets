@@ -51,7 +51,8 @@ public class MultipeerMessageManager extends Thread {
                 System.out.println("Porta do indexador: " + port);
                 peer.getPeersOnGroup().clear();
                 //enviar chave publica
-                PublicKeyMessage mess = new PublicKeyMessage(peer.getID(), "myKey", peer.getPublicKey());
+                PeerAnswer pa = new PeerAnswer(peer.getPublicKey(), peer.getIp(), peer.getPort());
+                PublicKeyMessage mess = new PublicKeyMessage(peer.getID(), "myKey", pa);
                 peer.send(mess, port);
                 //enviar informacoes de venda
                 for (Product product: peer.getProdutos()) {
@@ -69,7 +70,8 @@ public class MultipeerMessageManager extends Thread {
             System.out.println("Porta do indexador: " + port);
             peer.getPeersOnGroup().clear();
             //enviar chave publica
-            PublicKeyMessage mess = new PublicKeyMessage(peer.getID(), "myKey", peer.getPublicKey());
+            PeerAnswer pa = new PeerAnswer(peer.getPublicKey(), peer.getIp(), peer.getPort());
+            PublicKeyMessage mess = new PublicKeyMessage(peer.getID(), "myKey", pa);
             peer.send(mess, port);
             //enviar informacoes de venda
             for (Product product: peer.getProdutos()) {

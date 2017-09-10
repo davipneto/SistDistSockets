@@ -484,7 +484,7 @@ public class CompraEVenda extends javax.swing.JFrame {
             tableModel.setRowCount(0);
             tableModel.fireTableDataChanged();
             
-            PublicKey pkey = peer.sendBuy(id);
+            PeerAnswer pkey = peer.sendBuy(id);
         }
     }//GEN-LAST:event_BComprar1ActionPerformed
 

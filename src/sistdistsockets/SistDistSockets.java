@@ -55,7 +55,7 @@ public class SistDistSockets {
         System.out.println("Porta: " + p.getPort()); 
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CompraEVenda().setVisible(true);
+                new CompraEVenda(p).setVisible(true);
             }
         });
     }

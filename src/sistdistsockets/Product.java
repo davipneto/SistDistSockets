@@ -4,13 +4,14 @@
  * and open the template in the editor.
  */
 package sistdistsockets;
+import java.io.Serializable;
 import java.text.*;
 
 /**
  *
  * @author davi
  */
-public class Product {
+public class Product implements Serializable {
     
     private String descricao;
     private double preco;
@@ -26,6 +27,11 @@ public class Product {
 
     public double getPreco() {
         return preco;
+    }
+    
+    public String getPreco2(){
+        NumberFormat formatter = new DecimalFormat("#0.00");     
+        return formatter.format(preco).replace(',', '.');
     }
     
     @Override

@@ -129,6 +129,10 @@ public class Peer {
         }
     }
     
+    public Object sendBuyRequest(String message, int port){
+        return null;
+    }
+    
     /**
      * Define este par como o indexador.
      */
@@ -238,6 +242,10 @@ public class Peer {
 
     public Set<Product> getProdutos() {
         return produtos;
+    }
+    
+    public void setProduct(Product product){
+        produtos.add(product);
     }
     
     public void setKeyForAPeer (int iD, PublicKey key) {

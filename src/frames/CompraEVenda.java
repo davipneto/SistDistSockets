@@ -5,6 +5,8 @@
  */
 package frames;
 
+import java.security.PublicKey;
+import java.util.Map;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import sistdistsockets.*;
@@ -136,7 +138,7 @@ public class CompraEVenda extends javax.swing.JFrame {
                     .addComponent(PrecoVenda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(BVenda)
-                .addGap(0, 23, Short.MAX_VALUE))
+                .addGap(0, 29, Short.MAX_VALUE))
         );
 
         jInternalFrame2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -176,7 +178,7 @@ public class CompraEVenda extends javax.swing.JFrame {
                     .addComponent(DescCompra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(BPesquisa)
-                .addGap(0, 37, Short.MAX_VALUE))
+                .addGap(0, 43, Short.MAX_VALUE))
         );
 
         jInternalFrame4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -195,9 +197,16 @@ public class CompraEVenda extends javax.swing.JFrame {
             Class[] types = new Class [] {
                 java.lang.String.class, java.lang.String.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
             }
         });
         jScrollPane1.setViewportView(jTable1);
@@ -239,7 +248,7 @@ public class CompraEVenda extends javax.swing.JFrame {
                 .addGroup(jInternalFrame4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BAtualizar)
                     .addComponent(BExcluir))
-                .addGap(0, 36, Short.MAX_VALUE))
+                .addGap(0, 42, Short.MAX_VALUE))
         );
 
         jInternalFrame3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -255,26 +264,21 @@ public class CompraEVenda extends javax.swing.JFrame {
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Double.class, java.lang.Integer.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, true, false
+                java.lang.String.class, java.lang.String.class, java.lang.Integer.class
             };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
         });
         jScrollPane2.setViewportView(jTable2);
-        if (jTable2.getColumnModel().getColumnCount() > 0) {
-            jTable2.getColumnModel().getColumn(2).setHeaderValue("ID Vendedor");
-        }
 
         BComprar1.setText("Comprar");
+        BComprar1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BComprar1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jInternalFrame3Layout = new javax.swing.GroupLayout(jInternalFrame3.getContentPane());
         jInternalFrame3.getContentPane().setLayout(jInternalFrame3Layout);
@@ -295,7 +299,7 @@ public class CompraEVenda extends javax.swing.JFrame {
             .addGroup(jInternalFrame3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
                 .addComponent(BComprar1)
                 .addGap(25, 25, 25))
         );
@@ -408,9 +412,35 @@ public class CompraEVenda extends javax.swing.JFrame {
         if (peer.getIndexerPort() != -1) {
             Message m = new Message(peer.getID(), "wannabuy" + pesq);
             //enviar para pesquisar na thread do indexador se há o produto
-            Object o = peer.sendBuyRequest(m, peer.getIndexerPort());
-            //se houver um preencher a tabela e habilitar o botão de comprar7
+            Map<Integer, Product> prods = peer.sendBuyRequest(m, peer.getIndexerPort());
+            double preco = 0;
+            int iDEscolhido = -1;
+            for (int iD : prods.keySet()) {
+                System.out.println(iD + " prods " + prods.get(iD));
+                if (iDEscolhido == -1) {
+                    preco = prods.get(iD).getPreco();
+                    iDEscolhido = iD;
+                } else if (iDEscolhido != -1) {
+                    if(prods.get(iD).getPreco() < preco){
+                        preco = prods.get(iD).getPreco();
+                        iDEscolhido = iD;
+                    }else if(prods.get(iD).getPreco() == preco){
+                    //reputação    
+                    }
+                } 
+            }
             jInternalFrame3.setVisible(true);
+            DefaultTableModel tableModel = (DefaultTableModel) jTable2.getModel();
+            //atualizar a tabela a partir dos dados em produtos
+            tableModel.setRowCount(0);
+            tableModel.addRow(new Object[]{prods.get(iDEscolhido).getDescricao(), prods.get(iDEscolhido).getPreco2(),iDEscolhido});
+            
+            jTable2.setModel(tableModel);
+            tableModel.fireTableDataChanged();
+            //se houver um preencher a tabela e habilitar o botão de comprar7
+            
+        } else {
+            JOptionPane.showMessageDialog(null, "Aguarde indexador para completar ação");
         }
 
 
@@ -418,11 +448,11 @@ public class CompraEVenda extends javax.swing.JFrame {
 
     private void BAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BAtualizarActionPerformed
         //Pega os dados do produto selecionado na tabela
-        if (jTable2.getSelectedRow() == -1) {
+        if (jTable1.getSelectedRow() == -1) {
             JOptionPane.showMessageDialog(null, "Nenhum produto selecionado!");
         } else {
-            String descricao = jTable2.getValueAt(jTable2.getSelectedRow(), 0).toString();
-            double preco = Double.parseDouble(jTable2.getValueAt(jTable2.getSelectedRow(), 1).toString());
+            String descricao = jTable1.getValueAt(jTable1.getSelectedRow(), 0).toString();
+            double preco = Double.parseDouble(jTable1.getValueAt(jTable1.getSelectedRow(), 1).toString());
             //atualiza o set de produtos do peer
         }
 
@@ -438,6 +468,25 @@ public class CompraEVenda extends javax.swing.JFrame {
         }
 
     }//GEN-LAST:event_BExcluirActionPerformed
+
+    private void BComprar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BComprar1ActionPerformed
+        // TODO add your handling code here:
+        DescCompra.setText("");
+        
+        if (jTable2.getSelectedRow() == -1) {
+            JOptionPane.showMessageDialog(null, "Nenhum produto selecionado!");
+        } else {
+            String descricao = jTable2.getValueAt(jTable2.getSelectedRow(), 0).toString();
+            double preco = Double.parseDouble(jTable2.getValueAt(jTable2.getSelectedRow(), 1).toString());
+            int id = Integer.parseInt(jTable2.getValueAt(jTable2.getSelectedRow(), 2).toString());
+            
+            DefaultTableModel tableModel = (DefaultTableModel) jTable2.getModel();
+            tableModel.setRowCount(0);
+            tableModel.fireTableDataChanged();
+            
+            PublicKey pkey = peer.sendBuy(id);
+        }
+    }//GEN-LAST:event_BComprar1ActionPerformed
 
     void setUpTable() {
         DefaultTableModel tableModel = (DefaultTableModel) jTable1.getModel();

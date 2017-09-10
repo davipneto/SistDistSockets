@@ -76,7 +76,12 @@ public class UnicastReceiveThread extends Thread {
                         }
                     }
                     out.writeObject(prodBuy);
-                } else {
+                } else if (data.getMessage().startsWith("wannaKey")){
+                    int id = Integer.parseInt(data.getMessage().substring(8));
+                    out.writeObject(peer.getPeers().get(id));
+                }
+                
+                else {
                     UnicastMessageManager umm = new UnicastMessageManager(peer, data);
                     umm.start();
                 }

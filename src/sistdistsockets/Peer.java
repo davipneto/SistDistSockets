@@ -146,6 +146,25 @@ public class Peer {
         return null;
     }
     
+    public PublicKey sendBuy(int id){
+        Socket sock = null;
+        Message m = new Message(this.iD, "wannaKey"+id);
+        try {
+            sock = new Socket("localhost", port);
+            ObjectOutputStream out = new ObjectOutputStream(sock.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(sock.getInputStream());
+            out.writeObject(m);
+            //esperar a resposta
+            PublicKey panswer = (PublicKey) in.readObject();
+            return panswer;
+        } catch (IOException ex) {
+            Logger.getLogger(SistDistSockets.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Peer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    
     /**
      * Define este par como o indexador.
      */
@@ -217,6 +236,8 @@ public class Peer {
         return peersProducts;
     }
 
+    
+    
     /**
      * Teste se o indexador está vivo.
      * @return um <i>boolean</i> indicando se o indexador está vivo ou não

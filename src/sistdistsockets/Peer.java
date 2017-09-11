@@ -127,7 +127,8 @@ public class Peer {
     public void send(Message message, int port) {
         Socket sock = null;
         try {
-            sock = new Socket(indexerIP, port);
+            //trocar localhost pelo ip do indexador
+            sock = new Socket("localhost", port);
             ObjectOutputStream out = new ObjectOutputStream(sock.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(sock.getInputStream());
             out.writeObject(message);
@@ -139,6 +140,7 @@ public class Peer {
     public Map<Integer,Product> sendBuyRequest(Message message, int port){
         Socket sock = null;
         try {
+            //trocar localhost pelo ip do indexador
             sock = new Socket("localhost", port);
             ObjectOutputStream out = new ObjectOutputStream(sock.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(sock.getInputStream());
@@ -158,6 +160,7 @@ public class Peer {
         Socket sock = null;
         Message m = new Message(this.iD, "wannaKey"+id);
         try {
+            //trocar localhost pelo ip do indexador
             sock = new Socket("localhost", indexerPort);
             ObjectOutputStream out = new ObjectOutputStream(sock.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(sock.getInputStream());
@@ -195,6 +198,7 @@ public class Peer {
         Socket sock = null;
         Message m = new Message(this.iD, "byebye");
         try {
+            //trocar localhost pelo ip do indexador
             sock = new Socket("localhost", indexerPort);
             ObjectOutputStream out = new ObjectOutputStream(sock.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(sock.getInputStream());

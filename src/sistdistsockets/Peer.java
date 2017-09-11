@@ -35,6 +35,7 @@ public class Peer {
     private String group;
     //variável setada em true quando o peer recebe a mensagem indicando que o indexador está vivo
     private boolean indexerOn;
+    private String indexerIP;
     private int indexerPort;
     /*
     lista dos peers ativos no grupo, utilizada quando o indexador cai, para que o peer compare seu iD com o iD
@@ -46,7 +47,7 @@ public class Peer {
     private PublicKey publicKey;
     private Map<Integer,PeerAnswer> peers;
     private Map<Integer,Set<Product>> peersProducts;
-    
+    private Map<Integer,Integer> reputations;
     /**
      * Cria um peer com id e grupo multicast especificados, e gera o par de chaves pública
      * e privada.
@@ -57,6 +58,7 @@ public class Peer {
     public Peer(int id, String group) {
         this.iD = id;
         this.port = -1;
+        this.indexerIP = null;
         this.group = group;
         peersOnGroup = new ArrayList();
         //inicialmente, o peer nao conhece seu indexador
@@ -65,11 +67,12 @@ public class Peer {
         produtos = new HashSet();
         peers = new HashMap();
         peersProducts = new HashMap();
+        reputations = new HashMap();
         try {
             this.ip = InetAddress.getLocalHost().getHostAddress();
             //Inicializa o par de chaves do peer
             KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
-            kpg.initialize(512);
+            kpg.initialize(1024);
             KeyPair keypair = kpg.generateKeyPair();
             privateKey = keypair.getPrivate();
             publicKey = keypair.getPublic();
@@ -100,6 +103,7 @@ public class Peer {
             //envia a mensagem e deixa o grupo
             Message m = new Message(iD, message);
             message = m.toString();
+            System.out.println("Message: " + message);
             DatagramPacket messageOut = new DatagramPacket(message.getBytes(), message.getBytes().length, inetGroup, 6789);
             s.send(messageOut);
             s.leaveGroup(inetGroup);
@@ -123,7 +127,7 @@ public class Peer {
     public void send(Message message, int port) {
         Socket sock = null;
         try {
-            sock = new Socket("localhost", port);
+            sock = new Socket(indexerIP, port);
             ObjectOutputStream out = new ObjectOutputStream(sock.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(sock.getInputStream());
             out.writeObject(message);
@@ -154,7 +158,7 @@ public class Peer {
         Socket sock = null;
         Message m = new Message(this.iD, "wannaKey"+id);
         try {
-            sock = new Socket("localhost", port);
+            sock = new Socket("localhost", indexerPort);
             ObjectOutputStream out = new ObjectOutputStream(sock.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(sock.getInputStream());
             out.writeObject(m);
@@ -167,6 +171,37 @@ public class Peer {
             Logger.getLogger(Peer.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
+    }
+    
+    public int sendBuyFS(Message message, String ip, int port) {
+        Socket sock = null;
+        try {
+            sock = new Socket(ip, port);
+            ObjectOutputStream out = new ObjectOutputStream(sock.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(sock.getInputStream());
+            out.writeObject(message);
+            //esperar a resposta
+            int answer = (Integer) in.readObject();
+            return answer;
+        } catch (IOException ex) {
+            Logger.getLogger(SistDistSockets.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Peer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return -1;
+    }
+    
+    public void sendBye(){
+        Socket sock = null;
+        Message m = new Message(this.iD, "byebye");
+        try {
+            sock = new Socket("localhost", indexerPort);
+            ObjectOutputStream out = new ObjectOutputStream(sock.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(sock.getInputStream());
+            out.writeObject(m);
+        } catch (IOException ex) {
+            Logger.getLogger(SistDistSockets.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     /**
@@ -294,7 +329,7 @@ public class Peer {
         produtos.add(product);
     }
     
-    public void setKeyForAPeer (int iD, PeerAnswer key) {
+    public void setKeyForAPeer(int iD, PeerAnswer key) {
         peers.put(iD, key);
     }
     
@@ -309,7 +344,25 @@ public class Peer {
     public Map<Integer, PeerAnswer> getPeers() {
         return peers;
     }
-    
-    
 
+    public PrivateKey getPrivateKey() {
+        return privateKey;
+    }
+    
+    public void setReputations(int id, int rep){
+        if(!reputations.containsKey(id))
+            reputations.put(id, rep);
+        else
+            reputations.put(id, reputations.get(id) + rep);            
+    }
+
+    public Map<Integer, Integer> getReputations() {
+        return reputations;
+    }
+
+    public void setIndexerIP(String indexerIP) {
+        this.indexerIP = indexerIP;
+    }
+    
+    
 }

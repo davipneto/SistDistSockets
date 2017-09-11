@@ -7,9 +7,15 @@ package sistdistsockets;
 
 import java.io.*;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.logging.*;
 import java.security.*;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.xml.bind.DatatypeConverter;
 
 /**
  * A classe UnicastReceiveThread possui um ServerSocket responsável por ficar
@@ -76,20 +82,54 @@ public class UnicastReceiveThread extends Thread {
                         }
                     }
                     out.writeObject(prodBuy);
-                } else if (data.getMessage().startsWith("wannaKey")){
+                } else if (data.getMessage().startsWith("wannaKey")) {
                     int id = Integer.parseInt(data.getMessage().substring(8));
                     PeerAnswer key = peer.getPeers().get(id);
                     out.writeObject(key);
-                }
-                
-                else {
-                    UnicastMessageManager umm = new UnicastMessageManager(peer, data);
-                    umm.start();
+                } else if (data.getMessage().equals("myKey")) {
+                    PublicKeyMessage mess = (PublicKeyMessage) data;
+                    peer.setKeyForAPeer(data.getSenderID(), mess.getPublicKey());
+                    System.out.println("Recebi a chave publica do peer " + data.getSenderID());
+                } else if (data.getMessage().equals("myProduct")) {
+                    ProductMessage mess = (ProductMessage) data;
+                    peer.setProductForAPeer(data.getSenderID(), mess.getProduct());
+                    System.out.println("Recebi um produto do peer " + data.getSenderID() + ": " + mess.getProduct());
+                } else if (data.getMessage().equals("byebye")) {
+                    peer.getPeers().remove(data.getSenderID());
+                    peer.getPeersProducts().remove(data.getSenderID());
+                } else {
+                    System.out.println("dado da compra recebido com criptografia: " + data.getMessage());
+                    Cipher cipher = Cipher.getInstance("RSA");
+                    cipher.init(Cipher.DECRYPT_MODE, peer.getPrivateKey());
+                    byte[] mess = DatatypeConverter.parseHexBinary(data.getMessage());
+                    String message = new String(cipher.doFinal(mess), StandardCharsets.UTF_8);
+                    System.out.println("descriptografado " + message);
+                    boolean encontrou = false;
+                    for (Product p: peer.getProdutos()) {
+                        if (p.getDescricao().equals(message)) {
+                            encontrou = true;
+                            break;
+                        }
+                    }
+                    if (encontrou)
+                        out.writeObject(1);
+                    else
+                        out.writeObject(-1);
                 }
             }
         } catch (IOException ex) {
             Logger.getLogger(UnicastReceiveThread.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
+            Logger.getLogger(UnicastReceiveThread.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(UnicastReceiveThread.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchPaddingException ex) {
+            Logger.getLogger(UnicastReceiveThread.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidKeyException ex) {
+            Logger.getLogger(UnicastReceiveThread.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalBlockSizeException ex) {
+            Logger.getLogger(UnicastReceiveThread.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadPaddingException ex) {
             Logger.getLogger(UnicastReceiveThread.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

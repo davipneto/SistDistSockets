@@ -5,10 +5,21 @@
  */
 package frames;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.xml.bind.DatatypeConverter;
 import sistdistsockets.*;
 
 /**
@@ -71,8 +82,6 @@ public class CompraEVenda extends javax.swing.JFrame {
         jInternalFrame4 = new javax.swing.JInternalFrame();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        BAtualizar = new javax.swing.JButton();
-        BExcluir = new javax.swing.JButton();
         jInternalFrame3 = new javax.swing.JInternalFrame();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
@@ -80,6 +89,7 @@ public class CompraEVenda extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
+        jMenu3 = new javax.swing.JMenu();
 
         jMenuItem1.setText("jMenuItem1");
 
@@ -138,7 +148,7 @@ public class CompraEVenda extends javax.swing.JFrame {
                     .addComponent(PrecoVenda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(BVenda)
-                .addGap(0, 29, Short.MAX_VALUE))
+                .addGap(0, 33, Short.MAX_VALUE))
         );
 
         jInternalFrame2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -178,7 +188,7 @@ public class CompraEVenda extends javax.swing.JFrame {
                     .addComponent(DescCompra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(BPesquisa)
-                .addGap(0, 43, Short.MAX_VALUE))
+                .addGap(0, 47, Short.MAX_VALUE))
         );
 
         jInternalFrame4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -211,32 +221,13 @@ public class CompraEVenda extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(jTable1);
 
-        BAtualizar.setText("Atualizar Produto");
-        BAtualizar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BAtualizarActionPerformed(evt);
-            }
-        });
-
-        BExcluir.setText("Excluir Produto");
-        BExcluir.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BExcluirActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jInternalFrame4Layout = new javax.swing.GroupLayout(jInternalFrame4.getContentPane());
         jInternalFrame4.getContentPane().setLayout(jInternalFrame4Layout);
         jInternalFrame4Layout.setHorizontalGroup(
             jInternalFrame4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jInternalFrame4Layout.createSequentialGroup()
                 .addGap(23, 23, 23)
-                .addGroup(jInternalFrame4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jInternalFrame4Layout.createSequentialGroup()
-                        .addComponent(BAtualizar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(BExcluir))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jInternalFrame4Layout.setVerticalGroup(
@@ -244,11 +235,7 @@ public class CompraEVenda extends javax.swing.JFrame {
             .addGroup(jInternalFrame4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jInternalFrame4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(BAtualizar)
-                    .addComponent(BExcluir))
-                .addGap(0, 42, Short.MAX_VALUE))
+                .addGap(0, 76, Short.MAX_VALUE))
         );
 
         jInternalFrame3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -299,7 +286,7 @@ public class CompraEVenda extends javax.swing.JFrame {
             .addGroup(jInternalFrame3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 52, Short.MAX_VALUE)
                 .addComponent(BComprar1)
                 .addGap(25, 25, 25))
         );
@@ -319,6 +306,14 @@ public class CompraEVenda extends javax.swing.JFrame {
             }
         });
         jMenuBar1.add(jMenu2);
+
+        jMenu3.setText("Sair");
+        jMenu3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenu3MouseClicked(evt);
+            }
+        });
+        jMenuBar1.add(jMenu3);
 
         setJMenuBar(jMenuBar1);
         jMenuBar1.getAccessibleContext().setAccessibleName("Novos Produtos");
@@ -351,8 +346,6 @@ public class CompraEVenda extends javax.swing.JFrame {
                 .addComponent(jInternalFrame3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-
-        jInternalFrame1.getAccessibleContext().setAccessibleName("Novos Produtos");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -425,7 +418,20 @@ public class CompraEVenda extends javax.swing.JFrame {
                         preco = prods.get(iD).getPreco();
                         iDEscolhido = iD;
                     }else if(prods.get(iD).getPreco() == preco){
-                    //reputação    
+                        Map<Integer,Integer> reputations = peer.getReputations();
+                        if (reputations.containsKey(iDEscolhido)) {
+                            if (reputations.containsKey(iD) && reputations.get(iD) > reputations.get(iDEscolhido)) {
+                                preco = prods.get(iD).getPreco();
+                                iDEscolhido = iD;
+                            } else if (reputations.get(iDEscolhido) < 0) {
+                                preco = prods.get(iD).getPreco();
+                                iDEscolhido = iD;
+                            }
+                        } else if(reputations.containsKey(iD) && reputations.get(iD) >= 0) {
+                            preco = prods.get(iD).getPreco();
+                            iDEscolhido = iD;
+                        }
+                       
                     }
                 } 
             }
@@ -446,29 +452,6 @@ public class CompraEVenda extends javax.swing.JFrame {
 
     }//GEN-LAST:event_BPesquisaActionPerformed
 
-    private void BAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BAtualizarActionPerformed
-        //Pega os dados do produto selecionado na tabela
-        if (jTable1.getSelectedRow() == -1) {
-            JOptionPane.showMessageDialog(null, "Nenhum produto selecionado!");
-        } else {
-            String descricao = jTable1.getValueAt(jTable1.getSelectedRow(), 0).toString();
-            double preco = Double.parseDouble(jTable1.getValueAt(jTable1.getSelectedRow(), 1).toString());
-            //atualiza o set de produtos do peer
-        }
-
-    }//GEN-LAST:event_BAtualizarActionPerformed
-
-    private void BExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BExcluirActionPerformed
-        //Pega os dados do produto selecionado na tabela
-        if (jTable2.getSelectedRow() == -1) {
-            JOptionPane.showMessageDialog(null, "Nenhum produto selecionado!");
-        } else {
-            String descricao = jTable2.getValueAt(jTable2.getSelectedRow(), 0).toString();
-            double preco = Double.parseDouble(jTable2.getValueAt(jTable2.getSelectedRow(), 1).toString());
-        }
-
-    }//GEN-LAST:event_BExcluirActionPerformed
-
     private void BComprar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BComprar1ActionPerformed
         // TODO add your handling code here:
         DescCompra.setText("");
@@ -485,8 +468,38 @@ public class CompraEVenda extends javax.swing.JFrame {
             tableModel.fireTableDataChanged();
             
             PeerAnswer pkey = peer.sendBuy(id);
+            try {
+                Cipher cipher = Cipher.getInstance("RSA");
+                cipher.init(Cipher.ENCRYPT_MODE, pkey.getPublicKey());
+                byte[] encrypted = cipher.doFinal(descricao.getBytes(StandardCharsets.UTF_8));
+                String buyMessage = new String(DatatypeConverter.printHexBinary(encrypted));
+                Message mess = new Message(peer.getID(), buyMessage);
+                int sucess = peer.sendBuyFS(mess, pkey.getIp(), pkey.getPort());
+                if (sucess == -1) {
+                    JOptionPane.showMessageDialog(null, "Compra mal sucedida :(");
+                    peer.setReputations(id, sucess);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Compra realizada com sucesso!");
+                    peer.setReputations(id, sucess);
+                }
+            } catch (NoSuchAlgorithmException ex) {
+                Logger.getLogger(CompraEVenda.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NoSuchPaddingException ex) {
+                Logger.getLogger(CompraEVenda.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InvalidKeyException ex) {
+                Logger.getLogger(CompraEVenda.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IllegalBlockSizeException ex) {
+                Logger.getLogger(CompraEVenda.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (BadPaddingException ex) {
+                Logger.getLogger(CompraEVenda.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }//GEN-LAST:event_BComprar1ActionPerformed
+
+    private void jMenu3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu3MouseClicked
+        peer.sendBye();
+        dispose();
+    }//GEN-LAST:event_jMenu3MouseClicked
 
     void setUpTable() {
         DefaultTableModel tableModel = (DefaultTableModel) jTable1.getModel();
@@ -536,9 +549,7 @@ public class CompraEVenda extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton BAtualizar;
     private javax.swing.JButton BComprar1;
-    private javax.swing.JButton BExcluir;
     private javax.swing.JButton BPesquisa;
     private javax.swing.JButton BVenda;
     private javax.swing.JTextField DescCompra;
@@ -554,6 +565,7 @@ public class CompraEVenda extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JScrollPane jScrollPane1;

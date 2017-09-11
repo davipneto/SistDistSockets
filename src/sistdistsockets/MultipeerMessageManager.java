@@ -5,6 +5,8 @@
  */
 package sistdistsockets;
 
+import java.util.Scanner;
+
 /**
  * A classe MultipeerMessageManager é responsável por processar uma mensagem recebida para
  * um determinado peer.
@@ -48,7 +50,6 @@ public class MultipeerMessageManager extends Thread {
             if (peer.getIndexerPort() == -1) {
                 int port = Integer.parseInt(message.substring(9));
                 peer.setIndexerPort(port);
-                System.out.println("Porta do indexador: " + port);
                 peer.getPeersOnGroup().clear();
                 //enviar chave publica
                 PeerAnswer pa = new PeerAnswer(peer.getPublicKey(), peer.getIp(), peer.getPort());
@@ -65,9 +66,9 @@ public class MultipeerMessageManager extends Thread {
         if (message.startsWith("newIndexer")) {
             //como ha um novo indexador, o peer salva a porta unicast dele, esvazia a lista
             //utilizada para eleicao e envia os dados necessarios em comunicao unicast para ele
-            int port = Integer.parseInt(message.substring(10));
+            int port = Integer.valueOf(message.substring(10));
+            System.out.println("port: " + port);
             peer.setIndexerPort(port);
-            System.out.println("Porta do indexador: " + port);
             peer.getPeersOnGroup().clear();
             //enviar chave publica
             PeerAnswer pa = new PeerAnswer(peer.getPublicKey(), peer.getIp(), peer.getPort());

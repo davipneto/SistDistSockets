@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package sistdistsockets;
 
 import java.io.*;
@@ -16,45 +11,51 @@ import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 
 /**
- * A classe Peer encapsula as informações de um nó da arquitetura Peer-to-Peer de redes
- * de computadores, que funciona tanto como cliente quanto servidor, permitindo
- * compartilhamento de serviços e dados sem a necessidade de um servidor central.<p>
- * Nessa implementação, um dos peers funciona como um indexador, que é responsável por
- * fornecer as chaves públicas para comunicação unicast entre os pares, e fornecer informações
- * sobre os produtos disponíveis para venda em cada peer.</p>
- * @author davi
+ * A classe Peer encapsula as informações de um nó da arquitetura Peer-to-Peer
+ * de redes de computadores, que funciona tanto como cliente quanto servidor,
+ * permitindo compartilhamento de serviços e dados sem a necessidade de um
+ * servidor central.<p>
+ * Nessa implementação, um dos peers funciona como um indexador, que é
+ * responsável por fornecer as chaves públicas para comunicação unicast entre os
+ * pares, e fornecer informações sobre os produtos disponíveis para venda em
+ * cada peer.</p>
+ *
+ * @author Davi Pereira Neto
+ * @author Geovana Franco Santos
  * @see java.net.MulticastSocket
  * @see MultipeerReceiveThread
  */
-
 public class Peer {
-    
+
     private int iD;
     private String ip;
     private int port;
     private String group;
     //variável setada em true quando o peer recebe a mensagem indicando que o indexador está vivo
     private boolean indexerOn;
+    //variáveis que armazenam, respectivamente, IP e porta do indexador para comunicação unicast
     private String indexerIP;
     private int indexerPort;
     /*
     lista dos peers ativos no grupo, utilizada quando o indexador cai, para que o peer compare seu iD com o iD
     dos outros peers, e se o menor iD for o dele, invocara o metodo para ser elegido como indexador
-    */
+     */
     private ArrayList<Integer> peersOnGroup;
     private Set<Product> produtos;
     private PrivateKey privateKey;
     private PublicKey publicKey;
-    private Map<Integer,PeerAnswer> peers;
-    private Map<Integer,Set<Product>> peersProducts;
-    private Map<Integer,Integer> reputations;
+    private Map<Integer, PeerAnswer> peers;
+    private Map<Integer, Set<Product>> peersProducts;
+    //map que armazena reputação local dos outros peers
+    private Map<Integer, Integer> reputations;
+
     /**
-     * Cria um peer com id e grupo multicast especificados, e gera o par de chaves pública
-     * e privada.
+     * Cria um peer com id e grupo multicast especificados, e gera o par de
+     * chaves pública e privada.
+     *
      * @param id o identificador do par
      * @param group o grupo Multicast ao que o par vai pertencer
      */
-    
     public Peer(int id, String group) {
         this.iD = id;
         this.port = -1;
@@ -87,9 +88,10 @@ public class Peer {
         Timer verifyAliveIndexerTimer = new Timer();
         verifyAliveIndexerTimer.scheduleAtFixedRate(vai, 5000, 5000);
     }
-    
+
     /**
      * Envia uma mensagem para o grupo Multicast.
+     *
      * @param message a mensagem a ser enviada
      */
     public void send(String message) {
@@ -118,11 +120,12 @@ public class Peer {
             }
         }
     }
-    
+
     /**
      * Envia uma mensagem Unicast para a porta especifica
+     *
      * @param message a mensagem a ser enviada
-     * @param port o número da porta 
+     * @param port o número da porta
      */
     public void send(Message message, int port) {
         Socket sock = null;
@@ -136,8 +139,15 @@ public class Peer {
             Logger.getLogger(SistDistSockets.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public Map<Integer,Product> sendBuyRequest(Message message, int port){
+
+    /**
+     * Envia uma mensagem Unicast para a porta do indexador requisitando quais
+     * peers possuiem o produto procurado
+     *
+     * @param message a mensagem a ser enviada
+     * @param port o número da porta
+     */
+    public Map<Integer, Product> sendBuyRequest(Message message, int port) {
         Socket sock = null;
         try {
             //trocar localhost pelo ip do indexador
@@ -155,10 +165,18 @@ public class Peer {
         }
         return null;
     }
-    
-    public PeerAnswer sendBuy(int id){
+
+    /**
+     * Envia uma mensagem Unicast para a porta do indexador requisitando chave
+     * pública do peer com que o peer atual deseja fazer uma transação
+     *
+     * @param id do peer que deseja realizar comunicação
+     * @return um objeto <i>PeerAnswer</i> que representa o peer com o objeto a
+     * ser comprado.
+     */
+    public PeerAnswer sendBuy(int id) {
         Socket sock = null;
-        Message m = new Message(this.iD, "wannaKey"+id);
+        Message m = new Message(this.iD, "wannaKey" + id);
         try {
             //trocar localhost pelo ip do indexador
             sock = new Socket("localhost", indexerPort);
@@ -175,7 +193,17 @@ public class Peer {
         }
         return null;
     }
-    
+
+    /**
+     * Envia uma mensagem Unicast para ip e porta especifica. Utilizado para
+     * realizar a compra.
+     *
+     * @param message a mensagem a ser enviada
+     * @param ip o número de ip
+     * @param port o número da porta
+     * @return um valor <i>int</i> que representa se a transação foi realizada
+     * com sucesso(1) ou não(-1)
+     */
     public int sendBuyFS(Message message, String ip, int port) {
         Socket sock = null;
         try {
@@ -193,8 +221,11 @@ public class Peer {
         }
         return -1;
     }
-    
-    public void sendBye(){
+
+    /**
+     * Envia uma mensagem Unicast para o indexador anunciando saída do grupo
+     */
+    public void sendBye() {
         Socket sock = null;
         Message m = new Message(this.iD, "byebye");
         try {
@@ -207,7 +238,7 @@ public class Peer {
             Logger.getLogger(SistDistSockets.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     /**
      * Define este par como o indexador.
      */
@@ -225,10 +256,11 @@ public class Peer {
         Timer informAliveIndexerTimer = new Timer();
         informAliveIndexerTimer.schedule(informAliveIndexerTimerTask, 0, 5000);
     }
-    
+
     /**
-     * Adiciona o iD especificado a uma lista de iDs utilizada para eleger um novo indexador
-     * quando o atual cair.
+     * Adiciona o iD especificado a uma lista de iDs utilizada para eleger um
+     * novo indexador quando o atual cair.
+     *
      * @param iD o iD a ser adicionado na lista.
      */
     public void putPeersOnGroup(int iD) {
@@ -237,15 +269,18 @@ public class Peer {
 
     /**
      * Retorna o iD do par.
+     *
      * @return um valor <i>int</i> que representa o identificador do par.
      */
     public int getID() {
         return iD;
     }
-    
+
     /**
      * Retorna a porta em que o par está escutando na comunicação Unicast.
-     * @return um valor <i>int</i> que representa a porta do par para comunicação Unicast.
+     *
+     * @return um valor <i>int</i> que representa a porta do par para
+     * comunicação Unicast.
      */
     public int getPort() {
         return port;
@@ -253,6 +288,7 @@ public class Peer {
 
     /**
      * Retorna o grupo Multicast em que o par está inserido.
+     *
      * @return uma <i>String</i> que representa o IP do grupo Multicast
      */
     public String getGroup() {
@@ -261,28 +297,38 @@ public class Peer {
 
     /**
      * Retorna a porta em que o indexador está escutando na comunicação Unicast.
-     * @return um valor <i>int</i> que representa a porta do par indexador para comunicação Unicast
+     *
+     * @return um valor <i>int</i> que representa a porta do par indexador para
+     * comunicação Unicast
      */
     public int getIndexerPort() {
         return indexerPort;
     }
 
     /**
-     * Retorna a lista de iDs dos peers do grupo Multicast, que é preenchida quando o indexador cai.
-     * @return um <i>ArrayList</i> de inteiros contendo os iDs dos peers do grupo Multicast
+     * Retorna a lista de iDs dos peers do grupo Multicast, que é preenchida
+     * quando o indexador cai.
+     *
+     * @return um <i>ArrayList</i> de inteiros contendo os iDs dos peers do
+     * grupo Multicast
      */
     public ArrayList<Integer> getPeersOnGroup() {
         return peersOnGroup;
     }
 
+    /**
+     * Retorna a lista de produtos por iDs dos peers do grupo Multicast.
+     *
+     * @return um <i>ArrayList</i> de inteiros contendo os iDs dos peers do
+     * grupo Multicast
+     */
     public Map<Integer, Set<Product>> getPeersProducts() {
         return peersProducts;
     }
 
-    
-    
     /**
      * Teste se o indexador está vivo.
+     *
      * @return um <i>boolean</i> indicando se o indexador está vivo ou não
      */
     public boolean isIndexerOn() {
@@ -291,7 +337,9 @@ public class Peer {
 
     /**
      * Define se o indexador está vivo.
-     * @param indexerOn um <i>boolean</i> indicando se o indexador está vivo ou não
+     *
+     * @param indexerOn um <i>boolean</i> indicando se o indexador está vivo ou
+     * não
      */
     public void setIndexerOn(boolean indexerOn) {
         this.indexerOn = indexerOn;
@@ -299,6 +347,7 @@ public class Peer {
 
     /**
      * Seta o valor da porta do indexador.
+     *
      * @param indexerPort um <i>int</i> indicando o valor da porta do indexador
      */
     public void setIndexerPort(int indexerPort) {
@@ -307,6 +356,7 @@ public class Peer {
 
     /**
      * Seta o valor da porta para comunicação Unicast do peer.
+     *
      * @param port um <i>int</i> indicando o valor da porta do peer
      */
     public void setPort(int port) {
@@ -315,58 +365,112 @@ public class Peer {
 
     /**
      * Retorna a chave pública do peer
+     *
      * @return uma <i>PublicKey</i> representando a chave pública do peer
      */
     public PublicKey getPublicKey() {
         return publicKey;
     }
 
+    /**
+     * Retorna o set de produtos do peer
+     *
+     * @return um <i>Set<Products></i> representando o conjunto de produtos
+     */
     public Set<Product> getProdutos() {
         return produtos;
     }
 
+    /**
+     * Retorna o ip do peer
+     *
+     * @return uma <i>String</i> representando o ip do peer
+     */
     public String getIp() {
         return ip;
     }
 
-    public void setProduct(Product product){
+    /**
+     * Seta um novo produto à lista de produtos do peer
+     */
+    public void setProduct(Product product) {
         produtos.add(product);
     }
-    
+
+    /**
+     * Seta a lista de peers com o id, porta, ip e PublicKey
+     *
+     * @param iD do peer
+     * @param key que representa a porta, ip e PublicKey do peer
+     */
     public void setKeyForAPeer(int iD, PeerAnswer key) {
         peers.put(iD, key);
     }
-    
-    public void setProductForAPeer (int iD, Product product) {
-       if (!peersProducts.containsKey(iD)) {
-           peersProducts.put(iD, new HashSet());
-       }
-       Set products = peersProducts.get(iD);
-       products.add(product);
+
+    /**
+     * Adiciona à lista do indexador o produto que o peer está vendendo
+     *
+     * @param id é o id do peer
+     * @param product é o produto que o peer está vendendo
+     */
+    public void setProductForAPeer(int iD, Product product) {
+        if (!peersProducts.containsKey(iD)) {
+            peersProducts.put(iD, new HashSet());
+        }
+        Set products = peersProducts.get(iD);
+        products.add(product);
     }
 
+    /**
+     * Retorna a lista de peers com suas respectivas portas, ips e PublicKeys
+     *
+     * @return peers do tipo Map que associa um id com um objeto do tipo
+     * PeerAnswer
+     */
     public Map<Integer, PeerAnswer> getPeers() {
         return peers;
     }
 
+    /**
+     * Retorna a chave privada do peer
+     *
+     * @return tipo <i>PrivateKey</i> que armazena a chave privada de um peer
+     */
     public PrivateKey getPrivateKey() {
         return privateKey;
     }
-    
-    public void setReputations(int id, int rep){
-        if(!reputations.containsKey(id))
+
+    /**
+     * Atualiza as reputações dos peers depois de realizada a compra
+     *
+     * @param id do peer que vendeu
+     * @param rep possui 1 ou -1 para adicionar à reputação do peer
+     */
+    public void setReputations(int id, int rep) {
+        if (!reputations.containsKey(id)) {
             reputations.put(id, rep);
-        else
-            reputations.put(id, reputations.get(id) + rep);            
+        } else {
+            reputations.put(id, reputations.get(id) + rep);
+        }
     }
 
+    /**
+     * Retorna a lista de reputações dos peers que já realizaram alguma
+     * transação com o peer
+     *
+     * @return do tipo <i>Map<Integer, Integer></i> que associa o id do peer com a sua reputação
+     */
     public Map<Integer, Integer> getReputations() {
         return reputations;
     }
 
+    /**
+     * Seta o ip do indexador
+     *
+     * @param indexerIP que representa o ip do indexador
+     */
     public void setIndexerIP(String indexerIP) {
         this.indexerIP = indexerIP;
     }
-    
-    
+
 }

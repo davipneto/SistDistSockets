@@ -1,15 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package frames;
 
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,8 +16,11 @@ import javax.xml.bind.DatatypeConverter;
 import sistdistsockets.*;
 
 /**
+ * A classe CompraEVenda implementa um JFrame que exibe as opções de compra e
+ * venda de produtos na aplicação de forma visual.
  *
- * @author geova
+ * @author Davi Pereira Neto
+ * @author Geovana Franco Santos
  */
 public class CompraEVenda extends javax.swing.JFrame {
 
@@ -35,6 +31,12 @@ public class CompraEVenda extends javax.swing.JFrame {
     boolean compra = false;
     private Peer peer;
 
+    /**
+     * Construtor da classe que inicializa componentes e associa ao JFrame um
+     * peer recebido por parâmetro.
+     *
+     * @param peer associado ao formulário
+     */
     public CompraEVenda(Peer peer) {
         initComponents();
         jInternalFrame1.setVisible(false);
@@ -42,20 +44,10 @@ public class CompraEVenda extends javax.swing.JFrame {
         jInternalFrame3.setVisible(false);
         jInternalFrame4.setVisible(true);
         this.peer = peer;
+        //atualiza a tabela de produtos a vender caso já exista um produto cadastrado
         setUpTable();
+        //troca o nome da janela para o nome específico do id
         this.setTitle("Peer " + peer.getID());
-        /*jLabel1.setVisible(false);
-        jLabel2.setVisible(false);
-        jLabel3.setVisible(false);
-        jLabel4.setVisible(false);
-        jLabel5.setVisible(false);
-        jTable1.setVisible(false);
-        DescVenda.setVisible(false);
-        PrecoVenda.setVisible(false);
-        BVenda.setVisible(false);
-        DescCompra.setEnabled(false);
-        BPesquisa.setVisible(false);
-        BComprar.setVisible(false);*/
     }
 
     /**
@@ -350,30 +342,47 @@ public class CompraEVenda extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Evento associado ao menu corresponde ao cadastro de novos produtos para a
+     * venda. Quando acionado exibe o formulário interno que possui as caixas de
+     * texto relacionadas com o cadastro de um novo produto, e desabilita o
+     * formulário interno responsável pela compra.
+     *
+     * @param evt
+     */
     private void jMenu1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu1MouseClicked
-        // TODO add your handling code here:
         DescCompra.setText("");
         DescVenda.setText("");
         PrecoVenda.setText("");
+        //verifica se o formulário não está sendo exibido
         if (venda == false) {
             venda = true;
             jInternalFrame1.setVisible(true);
-
+            //desabilita o formulário de pesquisa para compra
             compra = false;
             jInternalFrame2.setVisible(false);
             jInternalFrame3.setVisible(false);
-
         }
     }//GEN-LAST:event_jMenu1MouseClicked
 
+    /**
+     * Evento associado ao menu corresponde à pesquisa de produtos para compra.
+     * Quando acionado exibe o formulário interno que possui as caixas de texto
+     * relacionadas com busca de um produto para compra, e desabilita o
+     * formulário interno responsável pelo cadastro de um novo produto para
+     * venda.
+     *
+     * @param evt
+     */
     private void jMenu2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu2MouseClicked
-        // TODO add your handling code here:
         DescCompra.setText("");
         DescVenda.setText("");
         PrecoVenda.setText("");
+        //verifica se o formulario de compra não está sendo exibido
         if (compra == false) {
             compra = true;
             jInternalFrame2.setVisible(true);
+            //desabilita o formulário de venda
             venda = false;
             jInternalFrame1.setVisible(false);
         }
@@ -381,104 +390,139 @@ public class CompraEVenda extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jMenu2MouseClicked
 
+    /**
+     * Evento associado ao botão que cadastra um novo produto para venda.
+     *
+     * @param evt
+     */
     private void BVendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BVendaActionPerformed
+        //armazena os valores escritos nas caixas de texto
         String descricao = DescVenda.getText();
         double preco = Double.parseDouble(PrecoVenda.getText().replace(',', '.'));
-        //atualizar o set de produtos do peer
+        //cria um novo produto com os dados fornecidos pelo usuário
         Product prod = new Product(descricao, preco);
+        //atualiza o set de produtos do peer
         peer.setProduct(prod);
-        //enviar para o indexador o novo produto
+        //enviar para o indexador o novo produto (se já houver um indexador)
         if (peer.getIndexerPort() != -1) {
             ProductMessage pm = new ProductMessage(peer.getID(), "myProduct", prod);
             peer.send(pm, peer.getIndexerPort());
         }
         //atualizar a tabela de produtos
         setUpTable();
-        //limpar caixa de textos
+        //limpar as caixas de texto
         DescVenda.setText("");
         PrecoVenda.setText("");
     }//GEN-LAST:event_BVendaActionPerformed
 
+    /**
+     * Evento associado ao botão que realiza uma pesquisa a partir da descrição
+     * de um produto e exibe o produto escolhido na tabela de compra
+     *
+     * @param evt
+     */
     private void BPesquisaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BPesquisaActionPerformed
-        // TODO add your handling code here:
+        //armazena o valor escrito na caixa de texto
         String pesq = DescCompra.getText();
+        //envia a descrição para o indexador (se já houver algum)
         if (peer.getIndexerPort() != -1) {
+            //cria a mensagem de deseja comprar com a descrição do produto
             Message m = new Message(peer.getID(), "wannabuy" + pesq);
             //enviar para pesquisar na thread do indexador se há o produto
+            //o indexador retorna um map com todos os vendedores que possuem o produto desejado
             Map<Integer, Product> prods = peer.sendBuyRequest(m, peer.getIndexerPort());
             double preco = 0;
             int iDEscolhido = -1;
+            //escolhe dentro da lista o melhor vendedor
             for (int iD : prods.keySet()) {
+                //exibe o id do peer e o produto de cada um
                 System.out.println(iD + " prods " + prods.get(iD));
+                //se ainda não escolheu nenhum pega o primeiro que ter o produto
                 if (iDEscolhido == -1) {
                     preco = prods.get(iD).getPreco();
                     iDEscolhido = iD;
-                } else if (iDEscolhido != -1) {
-                    if(prods.get(iD).getPreco() < preco){
+                }//se já escolheu algum vendedor verifica se o preço do próximo é menor ou a reputação melhor 
+                else if (iDEscolhido != -1) {
+                    //verifica se o preço do próximo é menor
+                    if (prods.get(iD).getPreco() < preco) {
                         preco = prods.get(iD).getPreco();
                         iDEscolhido = iD;
-                    }else if(prods.get(iD).getPreco() == preco){
-                        Map<Integer,Integer> reputations = peer.getReputations();
+                    }//se o preço for igual analiza a reputação 
+                    else if (prods.get(iD).getPreco() == preco) {
+                        Map<Integer, Integer> reputations = peer.getReputations();
+                        //se o peer escolhido já possuir uma reputação analisa se ele é maior ou menor que a do próximo peer
                         if (reputations.containsKey(iDEscolhido)) {
+                            //se os dois possuirem reputação mas a do próximo é maior, escolhe o próximo peer para comprar
                             if (reputations.containsKey(iD) && reputations.get(iD) > reputations.get(iDEscolhido)) {
                                 preco = prods.get(iD).getPreco();
                                 iDEscolhido = iD;
-                            } else if (reputations.get(iDEscolhido) < 0) {
+                            }//se a reputação do peer escolhido é negativa, prefere comprar do próximo peer
+                            else if (reputations.get(iDEscolhido) < 0) {
                                 preco = prods.get(iD).getPreco();
                                 iDEscolhido = iD;
                             }
-                        } else if(reputations.containsKey(iD) && reputations.get(iD) >= 0) {
+                        }//se o próximo peer possuir uma reputação e ela é positiva, prefere comprar do novo peer  
+                        else if (reputations.containsKey(iD) && reputations.get(iD) >= 0) {
                             preco = prods.get(iD).getPreco();
                             iDEscolhido = iD;
                         }
-                       
                     }
-                } 
+                }
             }
+            //exibe os dados da compra na tabela de compra
             jInternalFrame3.setVisible(true);
             DefaultTableModel tableModel = (DefaultTableModel) jTable2.getModel();
             //atualizar a tabela a partir dos dados em produtos
             tableModel.setRowCount(0);
-            tableModel.addRow(new Object[]{prods.get(iDEscolhido).getDescricao(), prods.get(iDEscolhido).getPreco2(),iDEscolhido});
-            
+            tableModel.addRow(new Object[]{prods.get(iDEscolhido).getDescricao(), prods.get(iDEscolhido).getPreco2(), iDEscolhido});
+
             jTable2.setModel(tableModel);
             tableModel.fireTableDataChanged();
-            //se houver um preencher a tabela e habilitar o botão de comprar7
-            
-        } else {
+        }//se não houver um indexador exibe uma mensagem de alerta 
+        else {
             JOptionPane.showMessageDialog(null, "Aguarde indexador para completar ação");
         }
 
 
     }//GEN-LAST:event_BPesquisaActionPerformed
 
+    /**
+     * Evento associado ao botão de comprar, que armazena o produto selecionado
+     * da tabela e envia solicitação de compra.
+     *
+     * @param evt
+     */
     private void BComprar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BComprar1ActionPerformed
-        // TODO add your handling code here:
         DescCompra.setText("");
-        
+        //se nenhum produto foi selecionado na tabela exibe mensagem de alerta
         if (jTable2.getSelectedRow() == -1) {
             JOptionPane.showMessageDialog(null, "Nenhum produto selecionado!");
         } else {
+            //armazena os dados do produto exibido na tabela
             String descricao = jTable2.getValueAt(jTable2.getSelectedRow(), 0).toString();
             double preco = Double.parseDouble(jTable2.getValueAt(jTable2.getSelectedRow(), 1).toString());
             int id = Integer.parseInt(jTable2.getValueAt(jTable2.getSelectedRow(), 2).toString());
-            
+
             DefaultTableModel tableModel = (DefaultTableModel) jTable2.getModel();
             tableModel.setRowCount(0);
             tableModel.fireTableDataChanged();
-            
+            //envia mensagem ao indexador solicitando ip, porta e chave pública do peer vendedor
             PeerAnswer pkey = peer.sendBuy(id);
             try {
+                //encriptografa mensagem de compra
                 Cipher cipher = Cipher.getInstance("RSA");
                 cipher.init(Cipher.ENCRYPT_MODE, pkey.getPublicKey());
                 byte[] encrypted = cipher.doFinal(descricao.getBytes(StandardCharsets.UTF_8));
                 String buyMessage = new String(DatatypeConverter.printHexBinary(encrypted));
                 Message mess = new Message(peer.getID(), buyMessage);
+                //envia mensagem de compra ao peer vendedor e armazena a resposta se foi bem sucedida ou não a compra (1 ou -1
                 int sucess = peer.sendBuyFS(mess, pkey.getIp(), pkey.getPort());
+                //se não foi bem sucedida
                 if (sucess == -1) {
                     JOptionPane.showMessageDialog(null, "Compra mal sucedida :(");
                     peer.setReputations(id, sucess);
-                } else {
+                }//se foi bem sucedida
+                else {
                     JOptionPane.showMessageDialog(null, "Compra realizada com sucesso!");
                     peer.setReputations(id, sucess);
                 }
@@ -496,11 +540,21 @@ public class CompraEVenda extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_BComprar1ActionPerformed
 
+    /**
+     * Evento associado ao menu de saída que envia uma mensagem de despedida ao
+     * indexador e fecha o processo.
+     *
+     * @param evt
+     */
     private void jMenu3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu3MouseClicked
         peer.sendBye();
-        dispose();
+        System.exit(0);
     }//GEN-LAST:event_jMenu3MouseClicked
 
+    /**
+     * Atualiza a tabela de produtos a serem vendidos pelo peer de acordo com a
+     * lista de produtos do peer
+     */
     void setUpTable() {
         DefaultTableModel tableModel = (DefaultTableModel) jTable1.getModel();
         //atualizar a tabela a partir dos dados em produtos
@@ -516,36 +570,7 @@ public class CompraEVenda extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(CompraEVenda.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(CompraEVenda.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(CompraEVenda.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(CompraEVenda.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
-
-        /* Create and display the form */
- /*java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new CompraEVenda(peer).setVisible(true);
-            }
-        });*/
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

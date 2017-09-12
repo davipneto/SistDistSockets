@@ -131,7 +131,7 @@ public class Peer {
         Socket sock = null;
         try {
             //trocar localhost pelo ip do indexador
-            sock = new Socket("localhost", port);
+            sock = new Socket(indexerIP, port);
             ObjectOutputStream out = new ObjectOutputStream(sock.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(sock.getInputStream());
             out.writeObject(message);
@@ -151,7 +151,7 @@ public class Peer {
         Socket sock = null;
         try {
             //trocar localhost pelo ip do indexador
-            sock = new Socket("localhost", port);
+            sock = new Socket(indexerIP, port);
             ObjectOutputStream out = new ObjectOutputStream(sock.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(sock.getInputStream());
             out.writeObject(message);
@@ -179,7 +179,7 @@ public class Peer {
         Message m = new Message(this.iD, "wannaKey" + id);
         try {
             //trocar localhost pelo ip do indexador
-            sock = new Socket("localhost", indexerPort);
+            sock = new Socket(indexerIP, indexerPort);
             ObjectOutputStream out = new ObjectOutputStream(sock.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(sock.getInputStream());
             out.writeObject(m);
@@ -230,7 +230,7 @@ public class Peer {
         Message m = new Message(this.iD, "byebye");
         try {
             //trocar localhost pelo ip do indexador
-            sock = new Socket("localhost", indexerPort);
+            sock = new Socket(indexerIP, indexerPort);
             ObjectOutputStream out = new ObjectOutputStream(sock.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(sock.getInputStream());
             out.writeObject(m);
@@ -245,12 +245,12 @@ public class Peer {
     public void beTheIndexer() {
         System.out.println("Eu, peer " + iD + " vou ser o indexador!!");
         //envia a mensagem de novo indexador para o grupo Multicast, para os outros peers informarem seus dados
-        send("newIndexer" + port);
+        send("newIndexer" + String.valueOf(port).length() + port + ip);
         //ativa a TimerTask q vai enviar de 5 em 5s uma mensagem para os processos saberem que o indexador está vivo
         TimerTask informAliveIndexerTimerTask = new TimerTask() {
             @Override
             public void run() {
-                send("indexerHi" + port);
+                send("indexerHi" + String.valueOf(port).length() + port + ip);
             }
         };
         Timer informAliveIndexerTimer = new Timer();

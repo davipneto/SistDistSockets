@@ -48,8 +48,12 @@ public class MultipeerMessageManager extends Thread {
             //caso o peer tenha acabado de entrar no grupo, salva a porta unicast do indexador, esvazia a lista
             //utilizada para eleicao e envia os dados necessarios em comunicao unicast para ele
             if (peer.getIndexerPort() == -1) {
-                int port = Integer.parseInt(message.substring(9));
+                int portsDigit = Integer.valueOf(message.substring(9,10));
+                int port = Integer.parseInt(message.substring(10,10+portsDigit));
                 peer.setIndexerPort(port);
+                String ip = message.substring(10+portsDigit);
+                peer.setIndexerIP(ip);
+                System.out.println("ip do indexador: " + ip);
                 peer.getPeersOnGroup().clear();
                 //enviar chave publica
                 PeerAnswer pa = new PeerAnswer(peer.getPublicKey(), peer.getIp(), peer.getPort());
@@ -65,9 +69,12 @@ public class MultipeerMessageManager extends Thread {
         } else if (message.startsWith("newIndexer")) {
             //como ha um novo indexador, o peer salva a porta unicast dele, esvazia a lista
             //utilizada para eleicao e envia os dados necessarios em comunicao unicast para ele
-            int port = Integer.valueOf(message.substring(10));
-            System.out.println("port: " + port);
+            int portsDigit = Integer.valueOf(message.substring(10,11));
+            int port = Integer.parseInt(message.substring(11, 11 + portsDigit));
             peer.setIndexerPort(port);
+            String ip = message.substring(11 + portsDigit);
+            peer.setIndexerIP(ip);
+            System.out.println("ip do indexador: " + ip);
             peer.getPeersOnGroup().clear();
             //enviar chave publica
             PeerAnswer pa = new PeerAnswer(peer.getPublicKey(), peer.getIp(), peer.getPort());

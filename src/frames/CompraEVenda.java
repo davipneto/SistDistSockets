@@ -474,7 +474,8 @@ public class CompraEVenda extends javax.swing.JFrame {
             DefaultTableModel tableModel = (DefaultTableModel) jTable2.getModel();
             //atualizar a tabela a partir dos dados em produtos
             tableModel.setRowCount(0);
-            tableModel.addRow(new Object[]{prods.get(iDEscolhido).getDescricao(), prods.get(iDEscolhido).getPreco2(), iDEscolhido});
+            if (iDEscolhido != -1)
+                tableModel.addRow(new Object[]{prods.get(iDEscolhido).getDescricao(), prods.get(iDEscolhido).getPreco2(), iDEscolhido});
 
             jTable2.setModel(tableModel);
             tableModel.fireTableDataChanged();

@@ -20,7 +20,6 @@ public class Message implements Serializable {
      * mensagem em si especificados.
      *
      * @param senderID um <i>int</i> representando o identificador do remetente
-     * @param length um <i>int</i> contendo o tamanho da mensagem
      * @param message uma <i>String</i> com a mensagem
      */
     public Message(int senderID, String message) {

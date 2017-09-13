@@ -18,8 +18,8 @@ public class Product implements Serializable {
     /**
      * Construtor da classe que seta a descrição e preço do produto.
      *
-     * @param descricao
-     * @param preco
+     * @param descricao com a descrição do produto vendido
+     * @param preco com o valor do produto
      */
     public Product(String descricao, double preco) {
         this.descricao = descricao;

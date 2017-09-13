@@ -142,6 +142,7 @@ public class Peer {
      *
      * @param message a mensagem a ser enviada
      * @param port o número da porta
+     * @return do tipo Map com os dados dos peers que possuem o produto requisitado
      */
     public Map<Integer, Product> sendBuyRequest(Message message, int port) {
         Socket sock = null;
@@ -371,7 +372,7 @@ public class Peer {
     /**
      * Retorna o set de produtos do peer
      *
-     * @return um <i>Set<Products></i> representando o conjunto de produtos
+     * @return um Set representando o conjunto de produtos
      */
     public Set<Product> getProdutos() {
         return produtos;
@@ -388,6 +389,7 @@ public class Peer {
 
     /**
      * Seta um novo produto à lista de produtos do peer
+     * @param product com o produto do peer
      */
     public void setProduct(Product product) {
         produtos.add(product);
@@ -406,7 +408,7 @@ public class Peer {
     /**
      * Adiciona à lista do indexador o produto que o peer está vendendo
      *
-     * @param id é o id do peer
+     * @param iD é o id do peer
      * @param product é o produto que o peer está vendendo
      */
     public void setProductForAPeer(int iD, Product product) {
@@ -454,7 +456,7 @@ public class Peer {
      * Retorna a lista de reputações dos peers que já realizaram alguma
      * transação com o peer
      *
-     * @return do tipo <i>Map<Integer, Integer></i> que associa o id do peer com a sua reputação
+     * @return do tipo Map que associa o id do peer com a sua reputação
      */
     public Map<Integer, Integer> getReputations() {
         return reputations;

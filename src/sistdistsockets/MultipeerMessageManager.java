@@ -1,6 +1,5 @@
 package sistdistsockets;
 
-import java.util.Scanner;
 
 /**
  * A classe MultipeerMessageManager é responsável por processar uma mensagem

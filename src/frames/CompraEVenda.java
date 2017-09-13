@@ -533,6 +533,7 @@ public class CompraEVenda extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(null, "Compra realizada com sucesso!");
                     peer.setReputations(id, sucess);
                 }
+            jInternalFrame3.setVisible(false);
             } catch (NoSuchAlgorithmException ex) {
                 Logger.getLogger(CompraEVenda.class.getName()).log(Level.SEVERE, null, ex);
             } catch (NoSuchPaddingException ex) {

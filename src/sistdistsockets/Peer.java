@@ -105,7 +105,6 @@ public class Peer {
             //envia a mensagem e deixa o grupo
             Message m = new Message(iD, message);
             message = m.toString();
-            System.out.println("Message: " + message);
             DatagramPacket messageOut = new DatagramPacket(message.getBytes(), message.getBytes().length, inetGroup, 6789);
             s.send(messageOut);
             s.leaveGroup(inetGroup);

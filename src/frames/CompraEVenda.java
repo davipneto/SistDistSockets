@@ -413,6 +413,7 @@ public class CompraEVenda extends javax.swing.JFrame {
         //limpar as caixas de texto
         DescVenda.setText("");
         PrecoVenda.setText("");
+        jInternalFrame1.setVisible(false);
     }//GEN-LAST:event_BVendaActionPerformed
 
     /**
@@ -431,57 +432,62 @@ public class CompraEVenda extends javax.swing.JFrame {
             //enviar para pesquisar na thread do indexador se há o produto
             //o indexador retorna um map com todos os vendedores que possuem o produto desejado
             Map<Integer, Product> prods = peer.sendBuyRequest(m, peer.getIndexerPort());
-            double preco = 0;
-            int iDEscolhido = -1;
-            //escolhe dentro da lista o melhor vendedor
-            for (int iD : prods.keySet()) {
-                //exibe o id do peer e o produto de cada um
-                System.out.println(iD + " prods " + prods.get(iD));
-                //se ainda não escolheu nenhum pega o primeiro que ter o produto
-                if (iDEscolhido == -1) {
-                    preco = prods.get(iD).getPreco();
-                    iDEscolhido = iD;
-                }//se já escolheu algum vendedor verifica se o preço do próximo é menor ou a reputação melhor 
-                else if (iDEscolhido != -1) {
-                    //verifica se o preço do próximo é menor
-                    if (prods.get(iD).getPreco() < preco) {
+            if (!prods.isEmpty()) {
+                double preco = 0;
+                int iDEscolhido = -1;
+                //escolhe dentro da lista o melhor vendedor
+                for (int iD : prods.keySet()) {
+                    //exibe o id do peer e o produto de cada um
+                    System.out.println(iD + " prods " + prods.get(iD));
+                    //se ainda não escolheu nenhum pega o primeiro que ter o produto
+                    if (iDEscolhido == -1) {
                         preco = prods.get(iD).getPreco();
                         iDEscolhido = iD;
-                    }//se o preço for igual analiza a reputação 
-                    else if (prods.get(iD).getPreco() == preco) {
-                        Map<Integer, Integer> reputations = peer.getReputations();
-                        //se o peer escolhido já possuir uma reputação analisa se ele é maior ou menor que a do próximo peer
-                        if (reputations.containsKey(iDEscolhido)) {
-                            //se os dois possuirem reputação mas a do próximo é maior, escolhe o próximo peer para comprar
-                            if (reputations.containsKey(iD) && reputations.get(iD) > reputations.get(iDEscolhido)) {
-                                preco = prods.get(iD).getPreco();
-                                iDEscolhido = iD;
-                            }//se a reputação do peer escolhido é negativa, prefere comprar do próximo peer
-                            else if (reputations.get(iDEscolhido) < 0) {
+                    }//se já escolheu algum vendedor verifica se o preço do próximo é menor ou a reputação melhor 
+                    else if (iDEscolhido != -1) {
+                        //verifica se o preço do próximo é menor
+                        if (prods.get(iD).getPreco() < preco) {
+                            preco = prods.get(iD).getPreco();
+                            iDEscolhido = iD;
+                        }//se o preço for igual analiza a reputação 
+                        else if (prods.get(iD).getPreco() == preco) {
+                            Map<Integer, Integer> reputations = peer.getReputations();
+                            //se o peer escolhido já possuir uma reputação analisa se ele é maior ou menor que a do próximo peer
+                            if (reputations.containsKey(iDEscolhido)) {
+                                //se os dois possuirem reputação mas a do próximo é maior, escolhe o próximo peer para comprar
+                                if (reputations.containsKey(iD) && reputations.get(iD) > reputations.get(iDEscolhido)) {
+                                    preco = prods.get(iD).getPreco();
+                                    iDEscolhido = iD;
+                                }//se a reputação do peer escolhido é negativa, prefere comprar do próximo peer
+                                else if (reputations.get(iDEscolhido) < 0) {
+                                    preco = prods.get(iD).getPreco();
+                                    iDEscolhido = iD;
+                                }
+                            }//se o próximo peer possuir uma reputação e ela é positiva, prefere comprar do novo peer  
+                            else if (reputations.containsKey(iD) && reputations.get(iD) >= 0) {
                                 preco = prods.get(iD).getPreco();
                                 iDEscolhido = iD;
                             }
-                        }//se o próximo peer possuir uma reputação e ela é positiva, prefere comprar do novo peer  
-                        else if (reputations.containsKey(iD) && reputations.get(iD) >= 0) {
-                            preco = prods.get(iD).getPreco();
-                            iDEscolhido = iD;
                         }
                     }
                 }
-            }
-            //exibe os dados da compra na tabela de compra
-            jInternalFrame3.setVisible(true);
-            DefaultTableModel tableModel = (DefaultTableModel) jTable2.getModel();
-            //atualizar a tabela a partir dos dados em produtos
-            tableModel.setRowCount(0);
-            if (iDEscolhido != -1)
+
+                //exibe os dados da compra na tabela de compra
+                jInternalFrame3.setVisible(true);
+                DefaultTableModel tableModel = (DefaultTableModel) jTable2.getModel();
+                //atualizar a tabela a partir dos dados em produtos
+                tableModel.setRowCount(0);
                 tableModel.addRow(new Object[]{prods.get(iDEscolhido).getDescricao(), prods.get(iDEscolhido).getPreco2(), iDEscolhido});
 
-            jTable2.setModel(tableModel);
-            tableModel.fireTableDataChanged();
+                jTable2.setModel(tableModel);
+                tableModel.fireTableDataChanged();
+            }//se não houver nenhum produto exibe uma mensagem de alerta
+            else {
+                JOptionPane.showMessageDialog(null, "Nenhum produto encontrado!");
+            }
         }//se não houver um indexador exibe uma mensagem de alerta 
         else {
-            JOptionPane.showMessageDialog(null, "Aguarde indexador para completar ação");
+            JOptionPane.showMessageDialog(null, "Aguarde indexador para completar ação!");
         }
 
 
@@ -548,7 +554,9 @@ public class CompraEVenda extends javax.swing.JFrame {
      * @param evt
      */
     private void jMenu3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu3MouseClicked
-        peer.sendBye();
+        if (peer.isIndexerOn()) {
+            peer.sendBye();
+        }
         System.exit(0);
     }//GEN-LAST:event_jMenu3MouseClicked
 
@@ -571,7 +579,7 @@ public class CompraEVenda extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

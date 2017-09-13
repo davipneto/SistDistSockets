@@ -44,7 +44,7 @@ public class MultipeerMessageManager extends Thread {
         if (message.startsWith("indexerHi")) {
             //seta a variavel do peer que indica que o indexador esta vivo
             peer.setIndexerOn(true);
-            //caso o peer tenha acabado de entrar no grupo, salva a porta unicast do indexador, esvazia a lista
+            //caso o peer tenha acabado de entrar no grupo, salva a porta e ip unicast do indexador, esvazia a lista
             //utilizada para eleicao e envia os dados necessarios em comunicao unicast para ele
             if (peer.getIndexerPort() == -1) {
                 int portsDigit = Integer.valueOf(message.substring(9,10));
@@ -64,9 +64,9 @@ public class MultipeerMessageManager extends Thread {
                     peer.send(pmess, port);
                 }
             }
-            //mensagem indicando o novo indexador e suaa porta unicast
+            //mensagem indicando o novo indexador, sua porta e o ip unicast
         } else if (message.startsWith("newIndexer")) {
-            //como ha um novo indexador, o peer salva a porta unicast dele, esvazia a lista
+            //como ha um novo indexador, o peer salva a porta e ip unicast dele, esvazia a lista
             //utilizada para eleicao e envia os dados necessarios em comunicao unicast para ele
             int portsDigit = Integer.valueOf(message.substring(10,11));
             int port = Integer.parseInt(message.substring(11, 11 + portsDigit));
